@@ -25,11 +25,14 @@ export default function BlogContainer() {
     return items.filter(
       (item) =>
         item.title.toLowerCase().includes(query) ||
-        item.description.toLowerCase().includes(query)
+        item.description.toLowerCase().includes(query),
     );
   }, [items, search]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / BLOG_PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredItems.length / BLOG_PAGE_SIZE),
+  );
   const currentPage = Math.min(page, totalPages);
 
   const paginatedItems = useMemo(() => {
@@ -47,7 +50,9 @@ export default function BlogContainer() {
     <>
       <section className="rounded-lg border border-border bg-card p-4">
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-2xl font-bold text-card-foreground">All Blog list</h2>
+          <h2 className="text-2xl font-bold text-card-foreground">
+            All Blog list
+          </h2>
 
           <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto">
             <Input
@@ -59,7 +64,9 @@ export default function BlogContainer() {
               placeholder="Search blog..."
               className="h-10 w-full border-border bg-background sm:w-[260px]"
             />
-            <AdminActionButton onClick={() => router.push("/dashboard/blog/create")}>
+            <AdminActionButton
+              onClick={() => router.push("/dashboard/blog/create")}
+            >
               <Plus className="h-4 w-4" />
               Add Blog
             </AdminActionButton>
@@ -96,4 +103,3 @@ export default function BlogContainer() {
     </>
   );
 }
-

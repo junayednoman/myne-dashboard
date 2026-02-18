@@ -14,7 +14,7 @@ export default function AdminActionButton({
     <Button
       className={cn(
         "h-10 w-full rounded-md border border-white bg-white px-5 text-black hover:bg-white/90 sm:w-auto",
-        className
+        className,
       )}
       {...props}
     >

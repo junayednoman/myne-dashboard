@@ -47,7 +47,7 @@ export function ADatePicker({
           data-empty={!date}
           className={cn(
             "data-[empty=true]:text-muted-foreground w-[280px] justify-start text-left font-normal",
-            className
+            className,
           )}
           disabled={disabled}
         >

@@ -58,7 +58,7 @@ function PaginationLink({
           variant: isActive ? "outline" : "ghost",
           size,
         }),
-        className
+        className,
       )} ${isActive && "bg-primary text-card"}`}
       {...props}
     />

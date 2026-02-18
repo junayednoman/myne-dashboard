@@ -15,4 +15,3 @@ export const setNewPasswordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-

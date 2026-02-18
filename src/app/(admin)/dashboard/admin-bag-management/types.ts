@@ -6,4 +6,3 @@ export type AdminBagItem = {
   productionYear: number;
   currentValue: number;
 };
-

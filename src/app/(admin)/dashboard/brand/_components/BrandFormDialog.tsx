@@ -103,7 +103,9 @@ export default function BrandFormDialog({
           />
 
           <div className="pt-1">
-            <label className="mb-2 block text-sm text-card-foreground">Brand logo</label>
+            <label className="mb-2 block text-sm text-card-foreground">
+              Brand logo
+            </label>
             <label className="relative flex min-h-[180px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-md border border-dashed border-border bg-background/60 px-4 py-8 text-center">
               {uploadPreviewUrl ? (
                 <>
@@ -134,7 +136,9 @@ export default function BrandFormDialog({
               ) : (
                 <>
                   <Upload className="h-6 w-6 text-muted-foreground" />
-                  <p className="text-base font-semibold text-card-foreground">Upload Logo</p>
+                  <p className="text-base font-semibold text-card-foreground">
+                    Upload Logo
+                  </p>
                 </>
               )}
               <input
@@ -155,9 +159,13 @@ export default function BrandFormDialog({
               />
             </label>
             {uploadFileName && (
-              <p className="mt-2 truncate text-xs text-green-400">{uploadFileName}</p>
+              <p className="mt-2 truncate text-xs text-green-400">
+                {uploadFileName}
+              </p>
             )}
-            {imageError && <p className="mt-2 text-sm text-destructive">{imageError}</p>}
+            {imageError && (
+              <p className="mt-2 text-sm text-destructive">{imageError}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -180,4 +188,3 @@ export default function BrandFormDialog({
     </Dialog>
   );
 }
-

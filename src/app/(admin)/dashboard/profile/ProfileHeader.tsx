@@ -14,11 +14,15 @@ interface ProfileHeaderProps {
 const ProfileHeader = ({ name, role, avatar }: ProfileHeaderProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewAvatar, setPreviewAvatar] = useState(
-    avatar || "https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg"
+    avatar ||
+      "https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg",
   );
 
   useEffect(() => {
-    setPreviewAvatar(avatar || "https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg");
+    setPreviewAvatar(
+      avatar ||
+        "https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg",
+    );
   }, [avatar]);
 
   const handleEditClick = () => {

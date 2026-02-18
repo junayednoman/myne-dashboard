@@ -91,7 +91,7 @@ const JoditTextEditor = ({
         },
       },
     }),
-    [placeholder]
+    [placeholder],
   );
 
   return (

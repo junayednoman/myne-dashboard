@@ -3,4 +3,3 @@ export type BagModelItem = {
   modelName: string;
   image: string;
 };
-

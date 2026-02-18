@@ -3,4 +3,3 @@ export type BrandItem = {
   brandName: string;
   logo: string;
 };
-

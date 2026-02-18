@@ -9,14 +9,25 @@ type BlogItemCardProps = {
   onEdit: (id: string) => void;
 };
 
-export default function BlogItemCard({ item, onDelete, onEdit }: BlogItemCardProps) {
+export default function BlogItemCard({
+  item,
+  onDelete,
+  onEdit,
+}: BlogItemCardProps) {
   return (
     <div className="rounded-lg border border-border bg-[#2d2f34]/80 p-3">
       <div className="relative mb-3 h-[200px] overflow-hidden rounded-md border border-border bg-muted/20">
-        <Image src={item.image} alt={item.title} fill className="object-contain p-2" />
+        <Image
+          src={item.image}
+          alt={item.title}
+          fill
+          className="object-contain p-2"
+        />
       </div>
 
-      <p className="mb-2 truncate text-base font-semibold text-card-foreground">{item.title}</p>
+      <p className="mb-2 truncate text-base font-semibold text-card-foreground">
+        {item.title}
+      </p>
       <p className="mb-3 min-h-10 text-sm text-muted-foreground [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
         {item.description}
       </p>
@@ -39,4 +50,3 @@ export default function BlogItemCard({ item, onDelete, onEdit }: BlogItemCardPro
     </div>
   );
 }
-

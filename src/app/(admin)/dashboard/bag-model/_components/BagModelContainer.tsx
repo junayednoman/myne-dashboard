@@ -44,7 +44,10 @@ export default function BagModelContainer() {
     setPendingDeleteId(null);
   };
 
-  const handleFormSubmit = (values: BagModelFormValues, imagePreviewUrl: string) => {
+  const handleFormSubmit = (
+    values: BagModelFormValues,
+    imagePreviewUrl: string,
+  ) => {
     if (formMode === "edit" && editingId) {
       setItems((prev) =>
         prev.map((item) =>
@@ -54,8 +57,8 @@ export default function BagModelContainer() {
                 modelName: `Model: ${values.brand}`,
                 image: imagePreviewUrl,
               }
-            : item
-        )
+            : item,
+        ),
       );
       return;
     }
@@ -139,7 +142,8 @@ export default function BagModelContainer() {
           formMode === "edit"
             ? {
                 brand: "Hermes",
-                modelName: editingItem?.modelName.replace("Model: ", "") ?? "Hermes",
+                modelName:
+                  editingItem?.modelName.replace("Model: ", "") ?? "Hermes",
               }
             : undefined
         }

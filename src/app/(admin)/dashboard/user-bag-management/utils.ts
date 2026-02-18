@@ -1,7 +1,7 @@
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const HISTORY_YEAR_OPTIONS = Array.from({ length: 11 }, (_, index) =>
-  String(CURRENT_YEAR - 5 + index)
+  String(CURRENT_YEAR - 5 + index),
 );
 
 export const formatCurrency = (value: number) =>
@@ -14,7 +14,7 @@ export const formatCurrency = (value: number) =>
 export const buildHistoricalValues = (
   cost: number,
   currentValue: number,
-  selectedYear: number
+  selectedYear: number,
 ) => {
   const months = [
     "Jan",
@@ -36,9 +36,8 @@ export const buildHistoricalValues = (
     const wave = Math.sin(index * 0.9) * 0.08;
     const value = Math.max(
       1000,
-      Math.round(cost + (adjustedCurrent - cost) * progress + cost * wave)
+      Math.round(cost + (adjustedCurrent - cost) * progress + cost * wave),
     );
     return { month, value };
   });
 };
-

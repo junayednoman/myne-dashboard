@@ -8,7 +8,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Birkin 30",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Shahid Hasan",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Hermes",
     model: "Togo Gold",
     purchaseYear: 2021,
@@ -20,7 +21,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Lady Dior",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Mahi Akter",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Dior",
     model: "Cannage",
     purchaseYear: 2022,
@@ -32,7 +34,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Jackie 1961",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Tonmoy Hasan",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Gucci",
     model: "Small",
     purchaseYear: 2020,
@@ -44,7 +47,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Classic Flap",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Nusrat Jahan",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Chanel",
     model: "Medium",
     purchaseYear: 2019,
@@ -56,7 +60,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Puzzle Edge",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Rahat Karim",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Loewe",
     model: "Small",
     purchaseYear: 2023,
@@ -68,7 +73,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Baguette",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Ayesha Noor",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Fendi",
     model: "Nappa",
     purchaseYear: 2021,
@@ -80,7 +86,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Le 5 a 7",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Tarek Ahmed",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "YSL",
     model: "Hobo",
     purchaseYear: 2022,
@@ -92,7 +99,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Alma BB",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Sadia Mim",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Louis Vuitton",
     model: "Epi",
     purchaseYear: 2020,
@@ -104,7 +112,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Amazona",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Sabbir Alam",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Loewe",
     model: "19",
     purchaseYear: 2018,
@@ -116,7 +125,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Rodeo",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Farzana Islam",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Balenciaga",
     model: "Medium",
     purchaseYear: 2024,
@@ -128,7 +138,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Book Tote",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Arif Rahman",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Dior",
     model: "Large",
     purchaseYear: 2021,
@@ -140,7 +151,8 @@ export const DUMMY_USER_BAGS: UserBagItem[] = [
     bagName: "Cassette",
     bagImage: "https://i.postimg.cc/Px6KY2s9/Frame-2147241971.png",
     ownerName: "Rima Sultana",
-    ownerImage: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    ownerImage:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     brand: "Bottega Veneta",
     model: "Padded",
     purchaseYear: 2023,

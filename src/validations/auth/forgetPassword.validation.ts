@@ -6,4 +6,3 @@ export const forgetPasswordSchema = z.object({
     .min(1, "Email address is required")
     .email("Please enter a valid email address"),
 });
-

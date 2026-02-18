@@ -42,8 +42,8 @@ const SettingsTabsEditor = () => {
   const handleContentChange = (sectionId: string, content: string) => {
     setContentSections((prev) =>
       prev.map((section) =>
-        section.id === sectionId ? { ...section, content } : section
-      )
+        section.id === sectionId ? { ...section, content } : section,
+      ),
     );
     setSavedStates((prev) => ({ ...prev, [sectionId]: false }));
   };
@@ -65,7 +65,7 @@ const SettingsTabsEditor = () => {
     } catch (err) {
       console.error("Failed to save content:", err);
       toast.error(
-        `Failed to save ${section.title.toLowerCase()}. Please try again.`
+        `Failed to save ${section.title.toLowerCase()}. Please try again.`,
       );
     } finally {
       setSavingStates((prev) => ({ ...prev, [sectionId]: false }));

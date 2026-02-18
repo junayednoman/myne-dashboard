@@ -27,7 +27,10 @@ export default function BrandContainer() {
     return items.filter((item) => item.brandName.toLowerCase().includes(query));
   }, [items, search]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / BRAND_PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredItems.length / BRAND_PAGE_SIZE),
+  );
   const currentPage = Math.min(page, totalPages);
 
   const paginatedItems = useMemo(() => {
@@ -41,14 +44,21 @@ export default function BrandContainer() {
     setPendingDeleteId(null);
   };
 
-  const handleFormSubmit = (values: BrandFormValues, logoPreviewUrl: string) => {
+  const handleFormSubmit = (
+    values: BrandFormValues,
+    logoPreviewUrl: string,
+  ) => {
     if (formMode === "edit" && editingId) {
       setItems((prev) =>
         prev.map((item) =>
           item.id === editingId
-            ? { ...item, brandName: `Brand: ${values.brandName}`, logo: logoPreviewUrl }
-            : item
-        )
+            ? {
+                ...item,
+                brandName: `Brand: ${values.brandName}`,
+                logo: logoPreviewUrl,
+              }
+            : item,
+        ),
       );
       return;
     }
@@ -67,7 +77,9 @@ export default function BrandContainer() {
     <>
       <section className="rounded-lg border border-border bg-card p-4">
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-2xl font-bold text-card-foreground">All Brand list</h2>
+          <h2 className="text-2xl font-bold text-card-foreground">
+            All Brand list
+          </h2>
           <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto">
             <Input
               value={search}
@@ -128,7 +140,10 @@ export default function BrandContainer() {
         mode={formMode}
         initialValues={
           formMode === "edit"
-            ? { brandName: editingItem?.brandName.replace("Brand: ", "") ?? "Hermes" }
+            ? {
+                brandName:
+                  editingItem?.brandName.replace("Brand: ", "") ?? "Hermes",
+              }
             : undefined
         }
         onOpenChange={setIsFormOpen}
@@ -137,4 +152,3 @@ export default function BrandContainer() {
     </>
   );
 }
-

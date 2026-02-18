@@ -4,4 +4,3 @@ export const formatCurrency = (value: number) =>
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value);
-

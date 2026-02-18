@@ -27,13 +27,20 @@ type BlogEditorFormProps = {
   };
 };
 
-export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormProps) {
+export default function BlogEditorForm({
+  mode,
+  initialValues,
+}: BlogEditorFormProps) {
   const router = useRouter();
   const [formKey, setFormKey] = useState(0);
   const [uploadFileName, setUploadFileName] = useState("");
-  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(initialValues?.image ?? "");
+  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(
+    initialValues?.image ?? "",
+  );
   const [imageError, setImageError] = useState("");
-  const [description, setDescription] = useState(initialValues?.description ?? "");
+  const [description, setDescription] = useState(
+    initialValues?.description ?? "",
+  );
   const [descriptionError, setDescriptionError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,11 +51,16 @@ export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormPr
     setDescription(initialValues?.description ?? "");
     setImageError("");
     setDescriptionError("");
-  }, [initialValues?.description, initialValues?.image, initialValues?.title, mode]);
+  }, [
+    initialValues?.description,
+    initialValues?.image,
+    initialValues?.title,
+    mode,
+  ]);
 
   const plainDescription = useMemo(
     () => description.replace(/<[^>]+>/g, "").trim(),
-    [description]
+    [description],
   );
 
   const handleSubmit = async (values: BlogFormValues) => {
@@ -65,7 +77,11 @@ export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormPr
 
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
-    toast.success(mode === "create" ? "Blog created successfully." : "Blog updated successfully.");
+    toast.success(
+      mode === "create"
+        ? "Blog created successfully."
+        : "Blog updated successfully.",
+    );
     setIsSubmitting(false);
     router.push("/dashboard/blog");
   };
@@ -93,7 +109,9 @@ export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormPr
         className="space-y-4"
       >
         <div>
-          <label className="mb-2 block text-sm text-card-foreground">Blog Image</label>
+          <label className="mb-2 block text-sm text-card-foreground">
+            Blog Image
+          </label>
           <label className="relative flex min-h-[220px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-md border border-dashed border-border bg-background/60 px-4 py-8 text-center">
             {uploadPreviewUrl ? (
               <>
@@ -124,9 +142,12 @@ export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormPr
             ) : (
               <>
                 <Upload className="h-6 w-6 text-muted-foreground" />
-                <p className="text-3xl font-semibold text-card-foreground">Upload</p>
+                <p className="text-3xl font-semibold text-card-foreground">
+                  Upload
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  Store receipts, authentication certificates, and purchase documents
+                  Store receipts, authentication certificates, and purchase
+                  documents
                 </p>
               </>
             )}
@@ -147,8 +168,14 @@ export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormPr
               }}
             />
           </label>
-          {uploadFileName && <p className="mt-2 truncate text-xs text-green-400">{uploadFileName}</p>}
-          {imageError && <p className="mt-2 text-sm text-destructive">{imageError}</p>}
+          {uploadFileName && (
+            <p className="mt-2 truncate text-xs text-green-400">
+              {uploadFileName}
+            </p>
+          )}
+          {imageError && (
+            <p className="mt-2 text-sm text-destructive">{imageError}</p>
+          )}
         </div>
 
         <AInput
@@ -159,7 +186,9 @@ export default function BlogEditorForm({ mode, initialValues }: BlogEditorFormPr
         />
 
         <div>
-          <label className="mb-2 block text-sm text-card-foreground">Blog Description</label>
+          <label className="mb-2 block text-sm text-card-foreground">
+            Blog Description
+          </label>
           <div className="overflow-hidden rounded-md border border-border bg-background">
             <JoditTextEditor
               content={description}

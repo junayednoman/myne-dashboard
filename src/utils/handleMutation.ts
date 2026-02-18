@@ -5,7 +5,7 @@ const handleMutation = async (
   mutationFunc: any,
   loadingTxt: string,
   onSuccess?: unknown,
-  onFailure?: unknown
+  onFailure?: unknown,
 ) => {
   const toastId = toast.loading(loadingTxt);
 
@@ -32,7 +32,8 @@ const handleMutation = async (
   } catch (error: any) {
     let errorMessage = "Something went wrong!";
     if (error.status === "PARSING_ERROR") {
-      errorMessage = "Server returned invalid data. Please try again or contact support.";
+      errorMessage =
+        "Server returned invalid data. Please try again or contact support.";
     } else if (error.data?.message) {
       errorMessage = error.data.message;
     }

@@ -9,7 +9,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "sarah.ahmed@example.com",
     registrationDate: "2025-11-03",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -18,7 +19,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "noman.rahman@example.com",
     registrationDate: "2025-09-18",
     status: "blocked",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: true,
   },
   {
@@ -27,7 +29,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "ayesha.khan@example.com",
     registrationDate: "2025-12-08",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -36,7 +39,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "fahim.islam@example.com",
     registrationDate: "2026-01-12",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -45,7 +49,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "mitu.sultana@example.com",
     registrationDate: "2026-01-30",
     status: "blocked",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: true,
   },
   {
@@ -54,7 +59,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "rakib.hasan@example.com",
     registrationDate: "2026-02-09",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -63,7 +69,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "nabila.noor@example.com",
     registrationDate: "2026-02-14",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -72,7 +79,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "tariq.ahmed@example.com",
     registrationDate: "2026-02-20",
     status: "blocked",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: true,
   },
   {
@@ -81,7 +89,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "adiba.chowdhury@example.com",
     registrationDate: "2026-02-25",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -90,7 +99,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "sabbir.alam@example.com",
     registrationDate: "2026-03-01",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
@@ -99,7 +109,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "rima.akter@example.com",
     registrationDate: "2026-03-07",
     status: "blocked",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: true,
   },
   {
@@ -108,7 +119,8 @@ export const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
     email: "tanvir.hossain@example.com",
     registrationDate: "2026-03-11",
     status: "active",
-    avatar: "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
 ];

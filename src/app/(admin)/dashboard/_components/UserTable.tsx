@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { Eye, Lock, Unlock } from 'lucide-react';
+import { useState } from "react";
+import Image from "next/image";
+import { Eye, Lock, Unlock } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,24 +12,24 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import UserReviewModal, {
   UserReviewData,
-} from '@/components/admin/user-review-modal';
+} from "@/components/admin/user-review-modal";
 
 export interface UserTableItem {
   id: string;
   userName: string;
   email: string;
   registrationDate: string;
-  status: 'active' | 'blocked';
+  status: "active" | "blocked";
   avatar: string;
   isBlocked?: boolean;
   businessName?: string;
@@ -39,65 +39,69 @@ export interface UserTableItem {
 
 const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
   {
-    id: '1',
-    userName: 'Sarah Ahmed',
-    email: 'sarah.ahmed@example.com',
-    registrationDate: '2025-11-03',
-    status: 'active',
-    avatar: 'https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=',
+    id: "1",
+    userName: "Sarah Ahmed",
+    email: "sarah.ahmed@example.com",
+    registrationDate: "2025-11-03",
+    status: "active",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
-    id: '2',
-    userName: 'Noman Rahman',
-    email: 'noman.rahman@example.com',
-    registrationDate: '2025-09-18',
-    status: 'blocked',
-    avatar: 'https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=',
+    id: "2",
+    userName: "Noman Rahman",
+    email: "noman.rahman@example.com",
+    registrationDate: "2025-09-18",
+    status: "blocked",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: true,
   },
   {
-    id: '3',
-    userName: 'Ayesha Khan',
-    email: 'ayesha.khan@example.com',
-    registrationDate: '2025-12-08',
-    status: 'active',
-    avatar: 'https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=',
+    id: "3",
+    userName: "Ayesha Khan",
+    email: "ayesha.khan@example.com",
+    registrationDate: "2025-12-08",
+    status: "active",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
   {
-    id: '4',
-    userName: 'Fahim Islam',
-    email: 'fahim.islam@example.com',
-    registrationDate: '2026-01-12',
-    status: 'active',
-    avatar: 'https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=',
+    id: "4",
+    userName: "Fahim Islam",
+    email: "fahim.islam@example.com",
+    registrationDate: "2026-01-12",
+    status: "active",
+    avatar:
+      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
     isBlocked: false,
   },
 ];
 
 export function UserTable() {
   const [users, setUsers] = useState<UserTableItem[]>(DUMMY_USER_TABLE_ITEMS);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'blocked'>(
-    'all'
-  );
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "blocked"
+  >("all");
   const [pendingBlockUserId, setPendingBlockUserId] = useState<string | null>(
-    null
+    null,
   );
   const [reviewUserId, setReviewUserId] = useState<string | null>(null);
 
   const filteredUsers =
-    statusFilter === 'all'
+    statusFilter === "all"
       ? users
       : users.filter((user) => user.status === statusFilter);
 
-  const handleStatusChange = (userId: string, status: 'active' | 'blocked') => {
+  const handleStatusChange = (userId: string, status: "active" | "blocked") => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === userId
-          ? { ...user, status, isBlocked: status === 'blocked' }
-          : user
-      )
+          ? { ...user, status, isBlocked: status === "blocked" }
+          : user,
+      ),
     );
   };
 
@@ -109,9 +113,9 @@ export function UserTable() {
         return {
           ...user,
           isBlocked: nextBlockedState,
-          status: nextBlockedState ? 'blocked' : 'active',
+          status: nextBlockedState ? "blocked" : "active",
         };
-      })
+      }),
     );
   };
 
@@ -140,9 +144,10 @@ export function UserTable() {
         userName: selectedReviewUser.userName,
         email: selectedReviewUser.email,
         avatar: selectedReviewUser.avatar,
-        businessName: selectedReviewUser.businessName ?? selectedReviewUser.userName,
-        contact: selectedReviewUser.contact ?? '+880 12564-5464',
-        location: selectedReviewUser.location ?? 'Mohakhali, Dhaka',
+        businessName:
+          selectedReviewUser.businessName ?? selectedReviewUser.userName,
+        contact: selectedReviewUser.contact ?? "+880 12564-5464",
+        location: selectedReviewUser.location ?? "Mohakhali, Dhaka",
       }
     : null;
 
@@ -150,7 +155,9 @@ export function UserTable() {
     <>
       <div className="w-full overflow-x-auto rounded-lg border border-border bg-card">
         <div className="border-b border-border px-6 py-4">
-          <h2 className="text-2xl font-bold text-card-foreground">User Table</h2>
+          <h2 className="text-2xl font-bold text-card-foreground">
+            User Table
+          </h2>
         </div>
         <table className="w-full">
           <thead>
@@ -168,17 +175,17 @@ export function UserTable() {
                 <Select
                   value={statusFilter}
                   onValueChange={(value) =>
-                    setStatusFilter(value as 'all' | 'active' | 'blocked')
+                    setStatusFilter(value as "all" | "active" | "blocked")
                   }
                 >
                   <SelectTrigger className="h-auto w-[120px] border-0 bg-transparent p-0 text-left text-sm font-semibold text-card-foreground shadow-none focus:ring-0 focus-visible:ring-0">
                     <SelectValue asChild>
                       <span>
-                        {statusFilter === 'all'
-                          ? 'Status'
-                          : statusFilter === 'active'
-                            ? 'Active'
-                            : 'Blocked'}
+                        {statusFilter === "all"
+                          ? "Status"
+                          : statusFilter === "active"
+                            ? "Active"
+                            : "Blocked"}
                       </span>
                     </SelectValue>
                   </SelectTrigger>
@@ -200,8 +207,8 @@ export function UserTable() {
                 key={user.id}
                 className={`${
                   index !== filteredUsers.length - 1
-                    ? 'border-b border-border'
-                    : ''
+                    ? "border-b border-border"
+                    : ""
                 } transition-colors hover:bg-muted/50`}
               >
                 {/* User Info */}
@@ -240,19 +247,19 @@ export function UserTable() {
                   <Select
                     value={user.status}
                     onValueChange={(value) =>
-                      handleStatusChange(user.id, value as 'active' | 'blocked')
+                      handleStatusChange(user.id, value as "active" | "blocked")
                     }
                   >
                     <SelectTrigger className="h-auto w-32 border-0 bg-transparent p-0 text-sm font-medium [&_svg]:hidden">
                       <SelectValue asChild>
                         <span
                           className={
-                            user.status === 'active'
-                              ? 'text-green-500'
-                              : 'text-red-500'
+                            user.status === "active"
+                              ? "text-green-500"
+                              : "text-red-500"
                           }
                         >
-                          {user.status === 'active' ? 'Active' : 'Blocked'}
+                          {user.status === "active" ? "Active" : "Blocked"}
                         </span>
                       </SelectValue>
                     </SelectTrigger>
@@ -276,7 +283,9 @@ export function UserTable() {
                     <button
                       onClick={() => handleBlockActionClick(user.id)}
                       className="inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-card-foreground"
-                      aria-label={user.isBlocked ? 'Unblock user' : 'Block user'}
+                      aria-label={
+                        user.isBlocked ? "Unblock user" : "Block user"
+                      }
                     >
                       {user.isBlocked ? (
                         <Lock className="h-5 w-5 text-red-500" />

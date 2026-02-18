@@ -25,7 +25,12 @@ const AdminHeader = () => {
           className="h-10 w-10 overflow-hidden rounded-full border border-[#7a8290]"
           aria-label="Profile"
         >
-          <div className="w-full h-full bg-cover bg-center bg-no-repeat" style={{backgroundImage: `url(https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg)`}}></div>
+          <div
+            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg)`,
+            }}
+          ></div>
         </Link>
       </div>
     </header>

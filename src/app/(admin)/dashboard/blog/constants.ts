@@ -112,4 +112,3 @@ export const DUMMY_BLOGS: BlogItem[] = [
     image: "https://i.postimg.cc/YCq0c5P8/Frame-2147242012.png",
   },
 ];
-

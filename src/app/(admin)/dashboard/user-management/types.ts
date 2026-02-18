@@ -10,4 +10,3 @@ export type UserTableItem = {
   contact?: string;
   location?: string;
 };
-

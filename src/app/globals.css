@@ -39,8 +39,9 @@
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: "Satoshi", var(--font-sans);
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -103,15 +104,16 @@ body {
   --radius: 8px;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.06);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.08);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.12),
-    0 1px 2px -1px hsl(0 0% 0% / 0.12);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.14), 0 1px 2px -1px hsl(0 0% 0% / 0.14);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.16),
-    0 2px 4px -1px hsl(0 0% 0% / 0.16);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.18),
-    0 4px 6px -1px hsl(0 0% 0% / 0.18);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.22),
-    0 8px 10px -1px hsl(0 0% 0% / 0.22);
+  --shadow-sm:
+    0 1px 3px 0px hsl(0 0% 0% / 0.12), 0 1px 2px -1px hsl(0 0% 0% / 0.12);
+  --shadow:
+    0 1px 3px 0px hsl(0 0% 0% / 0.14), 0 1px 2px -1px hsl(0 0% 0% / 0.14);
+  --shadow-md:
+    0 1px 3px 0px hsl(0 0% 0% / 0.16), 0 2px 4px -1px hsl(0 0% 0% / 0.16);
+  --shadow-lg:
+    0 1px 3px 0px hsl(0 0% 0% / 0.18), 0 4px 6px -1px hsl(0 0% 0% / 0.18);
+  --shadow-xl:
+    0 1px 3px 0px hsl(0 0% 0% / 0.22), 0 8px 10px -1px hsl(0 0% 0% / 0.22);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.3);
 }
 
@@ -152,8 +154,17 @@ body {
 
   body {
     @apply font-sans text-foreground;
-    background-image: radial-gradient(circle at 20% 20%, rgba(88, 98, 116, 0.22), transparent 32%),
-      radial-gradient(circle at 80% 30%, rgba(124, 136, 154, 0.18), transparent 28%),
+    background-image:
+      radial-gradient(
+        circle at 20% 20%,
+        rgba(88, 98, 116, 0.22),
+        transparent 32%
+      ),
+      radial-gradient(
+        circle at 80% 30%,
+        rgba(124, 136, 154, 0.18),
+        transparent 28%
+      ),
       linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
     background-attachment: fixed;
   }

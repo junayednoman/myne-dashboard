@@ -10,4 +10,3 @@ export type UserBagItem = {
   cost: number;
   currentValue: number;
 };
-

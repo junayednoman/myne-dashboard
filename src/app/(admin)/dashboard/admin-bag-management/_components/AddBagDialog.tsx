@@ -172,7 +172,9 @@ export default function AddBagDialog({
               />
             </label>
             {uploadFileName && (
-              <p className="mt-2 truncate text-xs text-green-400">{uploadFileName}</p>
+              <p className="mt-2 truncate text-xs text-green-400">
+                {uploadFileName}
+              </p>
             )}
             {imageError && (
               <p className="mt-2 text-sm text-destructive">{imageError}</p>

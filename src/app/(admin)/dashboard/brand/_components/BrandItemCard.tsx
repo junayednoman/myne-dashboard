@@ -9,11 +9,20 @@ type BrandItemCardProps = {
   onEdit: (id: string) => void;
 };
 
-export default function BrandItemCard({ item, onDelete, onEdit }: BrandItemCardProps) {
+export default function BrandItemCard({
+  item,
+  onDelete,
+  onEdit,
+}: BrandItemCardProps) {
   return (
     <div className="rounded-lg border border-border bg-[#2d2f34]/80 p-3">
       <div className="relative mb-3 h-[130px] overflow-hidden rounded-md border border-border bg-muted/20">
-        <Image src={item.logo} alt={item.brandName} fill className="object-contain p-2 py-6" />
+        <Image
+          src={item.logo}
+          alt={item.brandName}
+          fill
+          className="object-contain p-2 py-6"
+        />
       </div>
 
       <p className="mb-3 text-base text-card-foreground">{item.brandName}</p>
@@ -36,4 +45,3 @@ export default function BrandItemCard({ item, onDelete, onEdit }: BrandItemCardP
     </div>
   );
 }
-
