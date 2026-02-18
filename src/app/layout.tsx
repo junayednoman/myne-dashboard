@@ -12,10 +12,10 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Dashboard Starter",
-    template: "%s | Dashboard Starter",
+    default: "Myne Dashboard",
+    template: "%s | Myne Dashboard",
   },
-  description: "Reusable dashboard starter",
+  description: "Myne Dashboard",
 };
 
 export default function RootLayout({
