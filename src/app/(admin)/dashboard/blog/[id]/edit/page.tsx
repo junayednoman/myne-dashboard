@@ -4,11 +4,11 @@ import { DUMMY_BLOGS } from "../../constants";
 import BlogEditorForm from "../../_components/BlogEditorForm";
 
 type EditBlogPageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export default function EditBlogPage({ params }: EditBlogPageProps) {
-  const { id } = params;
+export default async function EditBlogPage({ params }: EditBlogPageProps) {
+  const { id } = await params;
   const blog = DUMMY_BLOGS.find((item) => item.id === id);
 
   if (!blog) {
