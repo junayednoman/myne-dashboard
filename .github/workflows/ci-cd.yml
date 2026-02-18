@@ -47,6 +47,16 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
+            [ -f "$HOME/.profile" ] && . "$HOME/.profile"
+            [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            if ! command -v npm >/dev/null 2>&1; then
+              echo "npm not found on VPS PATH. Install Node.js/npm for this user or expose it in shell profile."
+              exit 1
+            fi
+            node -v
+            npm -v
             cd ${{ secrets.VPS_APP_DIR }}
             git fetch origin
             git reset --hard origin/main
