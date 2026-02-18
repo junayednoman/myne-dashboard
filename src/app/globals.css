@@ -100,7 +100,7 @@ body {
   --sidebar-border: #2c323b;
   --sidebar-ring: #8d9caf;
 
-  --radius: 0.75rem;
+  --radius: 8px;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.06);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.08);
   --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.12),
