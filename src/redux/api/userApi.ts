@@ -29,6 +29,11 @@ export type AdminUsersQuery = {
   sortBy: number;
 };
 
+export type ChangeUserStatusPayload = {
+  id: string;
+  accountStatus: "active" | "blocked";
+};
+
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAdminUsers: builder.query<AdminUsersResponse, AdminUsersQuery>({
@@ -39,7 +44,15 @@ const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["user"],
     }),
+    changeUserStatus: builder.mutation<unknown, ChangeUserStatusPayload>({
+      query: ({ id, accountStatus }) => ({
+        url: `/admin/users/${id}`,
+        method: "PATCH",
+        body: { accountStatus },
+      }),
+      invalidatesTags: ["user"],
+    }),
   }),
 });
 
-export const { useGetAdminUsersQuery } = userApi;
+export const { useGetAdminUsersQuery, useChangeUserStatusMutation } = userApi;

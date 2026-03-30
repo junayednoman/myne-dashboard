@@ -14,7 +14,12 @@ import UserManagementPagination from "./UserManagementPagination";
 import UserManagementTable from "./UserManagementTable";
 import { UserTableItem } from "../types";
 import { USER_PAGE_SIZE } from "../constants";
-import { useGetAdminUsersQuery } from "@/redux/api/userApi";
+import {
+  useChangeUserStatusMutation,
+  useGetAdminUsersQuery,
+} from "@/redux/api/userApi";
+import { Skeleton } from "@/components/ui/skeleton";
+import handleMutation from "@/utils/handleMutation";
 
 export default function UserManagementContainer() {
   const [users, setUsers] = useState<UserTableItem[]>([]);
@@ -23,11 +28,12 @@ export default function UserManagementContainer() {
     "all" | "active" | "blocked"
   >("all");
   const [page, setPage] = useState(1);
-  const { data } = useGetAdminUsersQuery({
+  const { data, isLoading } = useGetAdminUsersQuery({
     page,
     limit: USER_PAGE_SIZE,
     sortBy: -1,
   });
+  const [changeUserStatus] = useChangeUserStatusMutation();
   const [pendingBlockUserId, setPendingBlockUserId] = useState<string | null>(
     null,
   );
@@ -71,27 +77,27 @@ export default function UserManagementContainer() {
   const paginatedUsers = filteredUsers;
 
   const handleStatusChange = (userId: string, status: "active" | "blocked") => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId
-          ? { ...user, status, isBlocked: status === "blocked" }
-          : user,
-      ),
+    handleMutation(
+      { id: userId, accountStatus: status },
+      changeUserStatus,
+      "Updating status...",
+      () => {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, status, isBlocked: status === "blocked" }
+              : user,
+          ),
+        );
+      },
     );
   };
 
   const handleToggleBlock = (userId: string) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.id !== userId) return user;
-        const nextBlockedState = !user.isBlocked;
-        return {
-          ...user,
-          isBlocked: nextBlockedState,
-          status: nextBlockedState ? "blocked" : "active",
-        };
-      }),
-    );
+    const current = users.find((user) => user.id === userId);
+    if (!current) return;
+    const nextStatus = current.isBlocked ? "active" : "blocked";
+    handleStatusChange(userId, nextStatus);
   };
 
   const handleBlockActionClick = (userId: string) => {
@@ -150,23 +156,33 @@ export default function UserManagementContainer() {
           </div>
         </div>
 
-        <UserManagementTable
-          users={paginatedUsers}
-          statusFilter={statusFilter}
-          onStatusFilterChange={(value) => {
-            setStatusFilter(value);
-            setPage(1);
-          }}
-          onStatusChange={handleStatusChange}
-          onView={setReviewUserId}
-          onToggleBlock={handleBlockActionClick}
-        />
+        {isLoading ? (
+          <div className="space-y-4 px-6 py-6">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        ) : (
+          <>
+            <UserManagementTable
+              users={paginatedUsers}
+              statusFilter={statusFilter}
+              onStatusFilterChange={(value) => {
+                setStatusFilter(value);
+                setPage(1);
+              }}
+              onStatusChange={handleStatusChange}
+              onView={setReviewUserId}
+              onToggleBlock={handleBlockActionClick}
+            />
 
-        <UserManagementPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+            <UserManagementPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </>
+        )}
       </div>
 
       <UserBlockDialog

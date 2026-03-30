@@ -24,7 +24,11 @@ import {
 import UserReviewModal, {
   UserReviewData,
 } from "@/components/admin/user-review-modal";
-import { useGetAdminUsersQuery } from "@/redux/api/userApi";
+import {
+  useChangeUserStatusMutation,
+  useGetAdminUsersQuery,
+} from "@/redux/api/userApi";
+import handleMutation from "@/utils/handleMutation";
 
 export interface UserTableItem {
   id: string;
@@ -45,6 +49,7 @@ export function UserTable() {
     limit: 6,
     sortBy: -1,
   });
+  const [changeUserStatus] = useChangeUserStatusMutation();
   const [users, setUsers] = useState<UserTableItem[]>([]);
   const [statusFilter, setStatusFilter] = useState<
     "all" | "active" | "blocked"
@@ -77,27 +82,27 @@ export function UserTable() {
   );
 
   const handleStatusChange = (userId: string, status: "active" | "blocked") => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId
-          ? { ...user, status, isBlocked: status === "blocked" }
-          : user,
-      ),
+    handleMutation(
+      { id: userId, accountStatus: status },
+      changeUserStatus,
+      "Updating status...",
+      () => {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId
+              ? { ...user, status, isBlocked: status === "blocked" }
+              : user,
+          ),
+        );
+      },
     );
   };
 
   const handleToggleBlock = (userId: string) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.id !== userId) return user;
-        const nextBlockedState = !user.isBlocked;
-        return {
-          ...user,
-          isBlocked: nextBlockedState,
-          status: nextBlockedState ? "blocked" : "active",
-        };
-      }),
-    );
+    const current = users.find((user) => user.id === userId);
+    if (!current) return;
+    const nextStatus = current.isBlocked ? "active" : "blocked";
+    handleStatusChange(userId, nextStatus);
   };
 
   const handleBlockActionClick = (userId: string) => {
