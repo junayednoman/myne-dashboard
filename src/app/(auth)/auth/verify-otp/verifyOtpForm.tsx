@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,12 +19,20 @@ import {
 import { VerifyOtpFormValues } from "@/types/auth/verifyOtp.types";
 import { verifyOtpSchema } from "@/validations/auth/verifyOtp.validation";
 import { useRouter } from "next/navigation";
+import handleMutation from "@/utils/handleMutation";
+import { useResendOtpMutation, useVerifyOtpMutation } from "@/redux/api/authApi";
+import { useAppSelector } from "@/redux/hooks/hooks";
+import { selectResetToken } from "@/redux/slice/authSlice";
+import { toast } from "sonner";
 
 const RESEND_SECONDS = 60;
 
 const VerifyOtpForm = () => {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
   const router = useRouter();
+  const resetToken = useAppSelector(selectResetToken);
+  const [verifyOtp] = useVerifyOtpMutation();
+  const [resendOtp] = useResendOtpMutation();
   const form = useForm<VerifyOtpFormValues>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: {
@@ -43,18 +50,36 @@ const VerifyOtpForm = () => {
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  const onSubmit = (data: VerifyOtpFormValues) => {
-    console.log("Verify OTP payload:", data);
-    toast.success("OTP verified successfully.");
+  const onSubmit = async (data: VerifyOtpFormValues) => {
+    if (!resetToken) {
+      toast.error("Reset token missing. Please request OTP again.");
+      return;
+    }
 
-    setTimeout(() => {
-      router.push("/auth/set-new-password");
-    }, 200);
+    await handleMutation(
+      { otp: data.otp, token: resetToken },
+      verifyOtp,
+      "Verifying OTP...",
+      () => {
+        router.push("/auth/set-new-password");
+      },
+    );
   };
 
-  const handleResend = () => {
-    toast.success("OTP sent again.");
-    setSecondsLeft(RESEND_SECONDS);
+  const handleResend = async () => {
+    if (!resetToken) {
+      toast.error("Reset token missing. Please request OTP again.");
+      return;
+    }
+
+    await handleMutation(
+      { token: resetToken },
+      resendOtp,
+      "Resending OTP...",
+      () => {
+        setSecondsLeft(RESEND_SECONDS);
+      },
+    );
   };
 
   const formattedSeconds = String(secondsLeft).padStart(2, "0");

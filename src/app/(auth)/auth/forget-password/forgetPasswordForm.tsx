@@ -3,19 +3,25 @@ import { AInput } from "@/components/form/AInput";
 import { Button } from "@/components/ui/button";
 import { ForgetPasswordFormValues } from "@/types/auth/forgetPassword.types";
 import { forgetPasswordSchema } from "@/validations/auth/forgetPassword.validation";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useForgetPasswordMutation } from "@/redux/api/authApi";
+import handleMutation from "@/utils/handleMutation";
+import { useAppDispatch } from "@/redux/hooks/hooks";
+import { setResetToken } from "@/redux/slice/authSlice";
 
 const ForgetPasswordForm = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [forgetPassword] = useForgetPasswordMutation();
 
-  const onSubmit = (data: ForgetPasswordFormValues) => {
-    console.log("Forget password payload:", data);
-    toast.success("OTP sent successfully.");
-
-    setTimeout(() => {
+  const onSubmit = async (data: ForgetPasswordFormValues) => {
+    await handleMutation(data, forgetPassword, "Sending OTP...", (res: any) => {
+      const token = res?.data?.jwtToken;
+      if (token) {
+        dispatch(setResetToken(token));
+      }
       router.push("/auth/verify-otp");
-    }, 200);
+    });
   };
 
   return (

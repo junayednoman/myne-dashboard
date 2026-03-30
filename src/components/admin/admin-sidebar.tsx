@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -15,10 +15,22 @@ import {
 import { adminSidebarNavItems } from "@/components/admin/admin-sidebar-nav";
 import Image from "next/image";
 import adminLogo from "@/assets/admin logo.svg";
+import handleMutation from "@/utils/handleMutation";
+import { useAdminLogoutMutation } from "@/redux/api/authApi";
 
 const AdminSidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [adminLogout] = useAdminLogoutMutation();
 
+  const handleLogout = async () => {
+    await handleMutation(
+      "logout",
+      adminLogout,
+      "Logging out...",
+      () => router.push("/auth/login"),
+    );
+  };
   return (
     <Sidebar collapsible="icon" className="flex flex-col bg-transparent">
       <SidebarHeader className="px-8 pb-8 pt-6 group-data-[collapsible=icon]:px-2">
@@ -61,7 +73,10 @@ const AdminSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter className="mt-auto px-4 pb-8 group-data-[collapsible=icon]:px-2">
-        <button className="flex h-10 w-full items-center justify-center gap-2 rounded-md border border-[#353b46] text-sm font-medium text-[#a6adb9] transition-all hover:border-[#dc2626] hover:bg-[#dc2626]/10 hover:text-[#dc2626]">
+        <button
+          onClick={handleLogout}
+          className="flex h-10 w-full items-center justify-center gap-2 rounded-md border border-[#353b46] text-sm font-medium text-[#a6adb9] transition-all hover:border-[#dc2626] hover:bg-[#dc2626]/10 hover:text-[#dc2626]"
+        >
           <LogOut className="size-4" />
           <span className="group-data-[collapsible=icon]:hidden">Log Out</span>
         </button>

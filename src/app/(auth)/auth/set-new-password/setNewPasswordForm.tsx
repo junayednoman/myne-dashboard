@@ -7,16 +7,32 @@ import { SetNewPasswordFormValues } from "@/types/auth/setNewPassword.types";
 import { setNewPasswordSchema } from "@/validations/auth/setNewPassword.validation";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import handleMutation from "@/utils/handleMutation";
+import { useResetPasswordMutation } from "@/redux/api/authApi";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { clearResetToken, selectResetToken } from "@/redux/slice/authSlice";
 
 const SetNewPasswordForm = () => {
   const router = useRouter();
-  const onSubmit = (data: SetNewPasswordFormValues) => {
-    console.log("Set new password payload:", data);
-    toast.success("Password updated successfully.");
+  const dispatch = useAppDispatch();
+  const resetToken = useAppSelector(selectResetToken);
+  const [resetPassword] = useResetPasswordMutation();
 
-    setTimeout(() => {
-      router.push("/auth/login");
-    }, 200);
+  const onSubmit = async (data: SetNewPasswordFormValues) => {
+    if (!resetToken) {
+      toast.error("Reset token missing. Please request OTP again.");
+      return;
+    }
+
+    await handleMutation(
+      { password: data.newPassword, token: resetToken },
+      resetPassword,
+      "Updating password...",
+      () => {
+        dispatch(clearResetToken());
+        router.push("/auth/login");
+      },
+    );
   };
 
   return (
@@ -25,7 +41,7 @@ const SetNewPasswordForm = () => {
         Set New Password
       </h2>
       <p className="mt-3 text-center text-[18px] leading-[130%] font-medium tracking-normal text-[#b5bbc6]">
-        Your password must be 8-10 character long.
+        Your password must be 8-13 character long.
       </p>
 
       <AForm<SetNewPasswordFormValues>

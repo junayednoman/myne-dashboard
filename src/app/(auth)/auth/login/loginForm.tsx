@@ -4,20 +4,19 @@ import { AInput } from "@/components/form/AInput";
 import { Button } from "@/components/ui/button";
 import { loginSchema } from "@/validations/auth/login.validation";
 import { LoginFormValues } from "@/types/auth/login.types";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import handleMutation from "@/utils/handleMutation";
+import { useAdminLoginMutation } from "@/redux/api/authApi";
 
 const LoginForm = () => {
   const router = useRouter();
+  const [adminLogin] = useAdminLoginMutation();
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Login payload:", data);
-    toast.success("Login successful!");
-
-    setTimeout(() => {
+  const onSubmit = async (data: LoginFormValues) => {
+    await handleMutation(data, adminLogin, "Logging in...", () => {
       router.push("/dashboard");
-    }, 200);
+    });
   };
   return (
     <div className="w-[550px] rounded-2xl border border-[#b7bdc82c] bg-[#171c248f] p-8 shadow-2xl backdrop-blur-md md:p-9">
@@ -32,8 +31,8 @@ const LoginForm = () => {
         schema={loginSchema}
         onSubmit={onSubmit}
         defaultValues={{
-          email: "",
-          password: "",
+          email: "junayednoman05@gmail.com",
+          password: "@Strongpass1",
           rememberMe: false,
         }}
         className="mt-8 space-y-5"
