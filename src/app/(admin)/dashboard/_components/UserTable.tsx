@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Eye, Lock, Unlock } from "lucide-react";
+import { format } from "date-fns";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +24,7 @@ import {
 import UserReviewModal, {
   UserReviewData,
 } from "@/components/admin/user-review-modal";
+import { useGetAdminUsersQuery } from "@/redux/api/userApi";
 
 export interface UserTableItem {
   id: string;
@@ -37,51 +39,13 @@ export interface UserTableItem {
   location?: string;
 }
 
-const DUMMY_USER_TABLE_ITEMS: UserTableItem[] = [
-  {
-    id: "1",
-    userName: "Sarah Ahmed",
-    email: "sarah.ahmed@example.com",
-    registrationDate: "2025-11-03",
-    status: "active",
-    avatar:
-      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
-    isBlocked: false,
-  },
-  {
-    id: "2",
-    userName: "Noman Rahman",
-    email: "noman.rahman@example.com",
-    registrationDate: "2025-09-18",
-    status: "blocked",
-    avatar:
-      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
-    isBlocked: true,
-  },
-  {
-    id: "3",
-    userName: "Ayesha Khan",
-    email: "ayesha.khan@example.com",
-    registrationDate: "2025-12-08",
-    status: "active",
-    avatar:
-      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
-    isBlocked: false,
-  },
-  {
-    id: "4",
-    userName: "Fahim Islam",
-    email: "fahim.islam@example.com",
-    registrationDate: "2026-01-12",
-    status: "active",
-    avatar:
-      "https://media.istockphoto.com/id/1465504312/vector/young-smiling-man-avatar-man-with-brown-beard-mustache-and-hair-wearing-yellow-sweater-or.jpg?s=612x612&w=0&k=20&c=9AyNmOwjadmLC1PKpANKEXj56e1KxHj9h9hGknd-Rb0=",
-    isBlocked: false,
-  },
-];
-
 export function UserTable() {
-  const [users, setUsers] = useState<UserTableItem[]>(DUMMY_USER_TABLE_ITEMS);
+  const { data } = useGetAdminUsersQuery({
+    page: 1,
+    limit: 6,
+    sortBy: -1,
+  });
+  const [users, setUsers] = useState<UserTableItem[]>([]);
   const [statusFilter, setStatusFilter] = useState<
     "all" | "active" | "blocked"
   >("all");
@@ -90,10 +54,27 @@ export function UserTable() {
   );
   const [reviewUserId, setReviewUserId] = useState<string | null>(null);
 
-  const filteredUsers =
-    statusFilter === "all"
-      ? users
-      : users.filter((user) => user.status === statusFilter);
+  useEffect(() => {
+    const apiUsers =
+      data?.data?.map((user) => ({
+        id: user._id,
+        userName: user.name,
+        email: user.email,
+        registrationDate: format(new Date(user.createdAt), "yyyy-MM-dd"),
+        status: user.accountStatus,
+        avatar: user.avatar,
+        isBlocked: user.accountStatus === "blocked",
+      })) ?? [];
+    setUsers(apiUsers);
+  }, [data]);
+
+  const filteredUsers = useMemo(
+    () =>
+      statusFilter === "all"
+        ? users
+        : users.filter((user) => user.status === statusFilter),
+    [statusFilter, users],
+  );
 
   const handleStatusChange = (userId: string, status: "active" | "blocked") => {
     setUsers((prevUsers) =>

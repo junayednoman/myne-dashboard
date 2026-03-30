@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import {
@@ -17,38 +17,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const baseMonthlyData = [
-  { month: "Jan", users: 4200 },
-  { month: "Feb", users: 4600 },
-  { month: "Mar", users: 4900 },
-  { month: "Apr", users: 5300 },
-  { month: "May", users: 6100 },
-  { month: "Jun", users: 6600 },
-  { month: "Jul", users: 7100 },
-  { month: "Aug", users: 7400 },
-  { month: "Sep", users: 7900 },
-  { month: "Oct", users: 8400 },
-  { month: "Nov", users: 9000 },
-  { month: "Dec", users: 9600 },
+type UserActivityItem = {
+  count: number;
+  month: number;
+  year: number;
+};
+
+const monthLabels = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
-
-const currentYear = new Date().getFullYear();
-const yearFilterOptions = Array.from({ length: 11 }, (_, index) => {
-  const year = currentYear - 5 + index;
-  return { value: `${year}`, label: `${year}` };
-});
-
-const chartData = yearFilterOptions.flatMap((option) => {
-  const year = Number(option.value);
-  const yearOffset = year - currentYear;
-  const factor = 1 + yearOffset * 0.06;
-
-  return baseMonthlyData.map((item) => ({
-    year: option.value,
-    month: item.month,
-    users: Math.round(item.users * factor),
-  }));
-});
 
 const chartConfig = {
   users: {
@@ -57,12 +45,53 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const UserOverview = () => {
-  const [selectedYear, setSelectedYear] = useState<string>(`${currentYear}`);
+const UserOverview = ({
+  userActivity,
+}: {
+  userActivity: UserActivityItem[];
+}) => {
+  const currentYear = new Date().getFullYear();
+  const availableYears = Array.from(
+    new Set(userActivity.map((item) => item.year)),
+  ).sort((a, b) => a - b);
+  const fallbackYears =
+    availableYears.length > 0
+      ? availableYears
+      : Array.from({ length: 3 }, (_, index) => currentYear - 1 + index);
+
+  const yearFilterOptions = fallbackYears.map((year) => ({
+    value: `${year}`,
+    label: `${year}`,
+  }));
+
+  const [selectedYear, setSelectedYear] = useState<string>(
+    yearFilterOptions[yearFilterOptions.length - 1]?.value ??
+      `${currentYear}`,
+  );
+
+  useEffect(() => {
+    const hasSelected = yearFilterOptions.some(
+      (option) => option.value === selectedYear,
+    );
+    if (!hasSelected && yearFilterOptions.length > 0) {
+      setSelectedYear(yearFilterOptions[yearFilterOptions.length - 1].value);
+    }
+  }, [selectedYear, yearFilterOptions]);
 
   const filteredData = useMemo(() => {
-    return chartData.filter((item) => item.year === selectedYear);
-  }, [selectedYear]);
+    const year = Number(selectedYear);
+    const byYear = userActivity.filter((item) => item.year === year);
+
+    const monthMap = new Map<number, number>();
+    byYear.forEach((item) => {
+      monthMap.set(item.month, item.count);
+    });
+
+    return monthLabels.map((label, index) => ({
+      month: label,
+      users: monthMap.get(index + 1) ?? 0,
+    }));
+  }, [selectedYear, userActivity]);
 
   return (
     <section className="rounded-[8px] border border-[#3a404a] bg-[#151a22]/80 p-6 backdrop-blur-sm">

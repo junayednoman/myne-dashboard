@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { format } from "date-fns";
 
 import AdminActionButton from "@/components/admin/admin-action-button";
 import UserReviewModal, {
@@ -12,19 +13,43 @@ import UserBlockDialog from "./UserBlockDialog";
 import UserManagementPagination from "./UserManagementPagination";
 import UserManagementTable from "./UserManagementTable";
 import { UserTableItem } from "../types";
-import { DUMMY_USER_TABLE_ITEMS, USER_PAGE_SIZE } from "../constants";
+import { USER_PAGE_SIZE } from "../constants";
+import { useGetAdminUsersQuery } from "@/redux/api/userApi";
 
 export default function UserManagementContainer() {
-  const [users, setUsers] = useState<UserTableItem[]>(DUMMY_USER_TABLE_ITEMS);
+  const [users, setUsers] = useState<UserTableItem[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<
     "all" | "active" | "blocked"
   >("all");
   const [page, setPage] = useState(1);
+  const { data } = useGetAdminUsersQuery({
+    page,
+    limit: USER_PAGE_SIZE,
+    sortBy: -1,
+  });
   const [pendingBlockUserId, setPendingBlockUserId] = useState<string | null>(
     null,
   );
   const [reviewUserId, setReviewUserId] = useState<string | null>(null);
+
+  const mappedUsers = useMemo<UserTableItem[]>(() => {
+    return (
+      data?.data?.map((user) => ({
+        id: user._id,
+        userName: user.name,
+        email: user.email,
+        registrationDate: format(new Date(user.createdAt), "yyyy-MM-dd"),
+        status: user.accountStatus,
+        avatar: user.avatar,
+        isBlocked: user.accountStatus === "blocked",
+      })) ?? []
+    );
+  }, [data]);
+
+  useEffect(() => {
+    setUsers(mappedUsers);
+  }, [mappedUsers]);
 
   const filteredUsers = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -41,16 +66,9 @@ export default function UserManagementContainer() {
       : bySearch.filter((user) => user.status === statusFilter);
   }, [users, search, statusFilter]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredUsers.length / USER_PAGE_SIZE),
-  );
+  const totalPages = Math.max(1, data?.meta?.totalPages ?? 1);
   const currentPage = Math.min(page, totalPages);
-
-  const paginatedUsers = useMemo(() => {
-    const start = (currentPage - 1) * USER_PAGE_SIZE;
-    return filteredUsers.slice(start, start + USER_PAGE_SIZE);
-  }, [filteredUsers, currentPage]);
+  const paginatedUsers = filteredUsers;
 
   const handleStatusChange = (userId: string, status: "active" | "blocked") => {
     setUsers((prevUsers) =>
