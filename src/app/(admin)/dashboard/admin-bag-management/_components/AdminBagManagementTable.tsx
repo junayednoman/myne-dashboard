@@ -1,21 +1,18 @@
 import Image from "next/image";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 import { AdminBagItem } from "../types";
-import { formatCurrency } from "../utils";
 import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 
 type AdminBagManagementTableProps = {
   bags: AdminBagItem[];
   onDelete: (id: string) => void;
-  onView: (id: string) => void;
   onEdit: (id: string) => void;
 };
 
 export default function AdminBagManagementTable({
   bags,
   onDelete,
-  onView,
   onEdit,
 }: AdminBagManagementTableProps) {
   return (
@@ -30,12 +27,6 @@ export default function AdminBagManagementTable({
           </th>
           <th className="px-6 py-4 text-left text-sm font-semibold text-card-foreground">
             Model
-          </th>
-          <th className="px-6 py-4 text-left text-sm font-semibold text-card-foreground">
-            Production Year
-          </th>
-          <th className="px-6 py-4 text-left text-sm font-semibold text-card-foreground">
-            Current Value
           </th>
           <th className="px-6 py-4 text-left text-sm font-semibold text-card-foreground">
             Action
@@ -66,21 +57,8 @@ export default function AdminBagManagementTable({
             <td className="px-6 py-4 text-sm text-muted-foreground">
               {bag.model}
             </td>
-            <td className="px-6 py-4 text-sm text-muted-foreground">
-              {bag.productionYear}
-            </td>
-            <td className="px-6 py-4 text-sm font-medium text-card-foreground">
-              {formatCurrency(bag.currentValue)}
-            </td>
             <td className="px-6 py-4">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onView(bag.id)}
-                  className="inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-card-foreground"
-                  aria-label="View bag"
-                >
-                  <Eye className="h-5 w-5" />
-                </button>
                 <button
                   onClick={() => onEdit(bag.id)}
                   className="inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-card-foreground"

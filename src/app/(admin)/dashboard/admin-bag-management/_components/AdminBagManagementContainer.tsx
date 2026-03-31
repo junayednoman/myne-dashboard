@@ -148,7 +148,6 @@ export default function AdminBagManagementContainer() {
             <AdminBagManagementTable
               bags={paginatedBags}
               onDelete={setPendingDeleteBagId}
-              onView={setViewBagId}
               onEdit={setEditBagId}
             />
 

@@ -37,6 +37,12 @@ export type DeleteAdminBagPayload = {
   id: string;
 };
 
+export type CreateAdminBagPayload = {
+  bagBrand: string;
+  bagModel: string;
+  bagImage: File;
+};
+
 const adminBagApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAdminBags: builder.query<AdminBagListResponse, AdminBagListQuery>({
@@ -54,7 +60,25 @@ const adminBagApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["adminBag"],
     }),
+    createAdminBag: builder.mutation<unknown, CreateAdminBagPayload>({
+      query: ({ bagBrand, bagModel, bagImage }) => {
+        const formData = new FormData();
+        formData.append("bagBrand", bagBrand);
+        formData.append("bagModel", bagModel);
+        formData.append("bagImage", bagImage);
+        return {
+          url: "/admin/bags",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["adminBag"],
+    }),
   }),
 });
 
-export const { useGetAdminBagsQuery, useDeleteAdminBagMutation } = adminBagApi;
+export const {
+  useGetAdminBagsQuery,
+  useDeleteAdminBagMutation,
+  useCreateAdminBagMutation,
+} = adminBagApi;

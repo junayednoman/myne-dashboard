@@ -7,9 +7,12 @@ import { z } from "zod";
 
 import AdminActionButton from "@/components/admin/admin-action-button";
 import AForm from "@/components/form/AForm";
-import { AInput } from "@/components/form/AInput";
 import { ASelect } from "@/components/form/ASelect";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useGetBrandsQuery } from "@/redux/api/brandApi";
+import { useGetModelsQuery } from "@/redux/api/modelApi";
+import { useCreateAdminBagMutation } from "@/redux/api/adminBagApi";
+import handleMutation from "@/utils/handleMutation";
 
 type AddBagDialogProps = {
   open: boolean;
@@ -31,6 +34,21 @@ export default function AddBagDialog({
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState("");
   const [imageError, setImageError] = useState("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const { data: brandsData } = useGetBrandsQuery({ page: 1, limit: 200 });
+  const { data: modelsData } = useGetModelsQuery({ page: 1, limit: 200 });
+  const [createAdminBag] = useCreateAdminBagMutation();
+
+  const brandOptions =
+    brandsData?.data?.map((brand) => ({
+      label: brand.brandName,
+      value: brand._id,
+    })) ?? [];
+  const modelOptions =
+    modelsData?.data?.map((model) => ({
+      label: model.modelName,
+      value: model._id,
+    })) ?? [];
 
   useEffect(() => {
     return () => {
@@ -45,15 +63,27 @@ export default function AddBagDialog({
     setUploadFileName("");
     setUploadPreviewUrl("");
     setImageError("");
+    setUploadFile(null);
   };
 
-  const handleSubmit = () => {
-    if (!uploadFileName) {
+  const handleSubmit = (values: AddBagFormValues) => {
+    if (!uploadFile) {
       setImageError("Bag image is required");
       return;
     }
-    reset();
-    onOpenChange(false);
+    handleMutation(
+      {
+        bagBrand: values.brand,
+        bagModel: values.model,
+        bagImage: uploadFile,
+      },
+      createAdminBag,
+      "Creating admin bag...",
+      () => {
+        reset();
+        onOpenChange(false);
+      },
+    );
   };
 
   return (
@@ -95,20 +125,16 @@ export default function AddBagDialog({
               name="brand"
               label="Brand"
               required
-              options={[
-                { label: "Hermes", value: "Hermes" },
-                { label: "Chanel", value: "Chanel" },
-                { label: "Dior", value: "Dior" },
-                { label: "Gucci", value: "Gucci" },
-              ]}
+              options={brandOptions}
               placeholder="Select brand"
             />
 
-            <AInput
+            <ASelect
               name="model"
               label="Model"
               required
-              placeholder="Write your bag model name"
+              options={modelOptions}
+              placeholder="Select model"
             />
           </div>
 
@@ -136,6 +162,7 @@ export default function AddBagDialog({
                       setUploadPreviewUrl("");
                       setUploadFileName("");
                       setImageError("");
+                      setUploadFile(null);
                     }}
                     className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-black/60 text-white"
                     aria-label="Remove uploaded image"
@@ -168,6 +195,7 @@ export default function AddBagDialog({
                   setUploadPreviewUrl(nextPreview);
                   setUploadFileName(file.name);
                   setImageError("");
+                  setUploadFile(file);
                 }}
               />
             </label>
