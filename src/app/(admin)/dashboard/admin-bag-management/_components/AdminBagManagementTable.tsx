@@ -3,6 +3,7 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import { AdminBagItem } from "../types";
 import { formatCurrency } from "../utils";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 
 type AdminBagManagementTableProps = {
   bags: AdminBagItem[];
@@ -48,7 +49,7 @@ export default function AdminBagManagementTable({
             <td className="px-6 py-4">
               <div className="relative h-10 w-10 overflow-hidden rounded-md bg-muted">
                 <Image
-                  src={bag.bagImage}
+                  src={bag.bagImage || PLACEHOLDER_IMAGE}
                   alt={bag.model}
                   fill
                   className="object-cover"

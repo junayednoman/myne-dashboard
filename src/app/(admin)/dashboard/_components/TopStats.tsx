@@ -16,42 +16,42 @@ type TopStatsProps = {
 };
 
 const TopStats = ({ stats }: TopStatsProps) => {
-  const formatNumber = (value: number) =>
-    new Intl.NumberFormat("en-US").format(value);
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("de-DE", {
-      style: "currency",
-      currency: "EUR",
-      minimumFractionDigits: 2,
-    }).format(value);
+  // const formatNumber = (value: number) =>
+  //   new Intl.NumberFormat("en-US").format(value);
+  // const formatCurrency = (value: number) =>
+  //   new Intl.NumberFormat("de-DE", {
+  //     style: "currency",
+  //     currency: "EUR",
+  //     minimumFractionDigits: 2,
+  //   }).format(value);
 
   const totalUsers = stats?.totalUsers ?? 0;
   const totalBags = stats?.totalBags ?? 0;
   const totalCost = stats?.totalCost ?? 0;
   const currentValue = stats?.currentValue ?? 0;
-
+  console.log("currentValue", currentValue);
   const statCards = [
     {
       label: "Total User",
-      value: formatNumber(totalUsers),
+      value: totalUsers,
       icon: Users,
       iconBgColor: "bg-[#1da1f2]",
     },
     {
       label: "Total Bags",
-      value: formatNumber(totalBags),
+      value: totalBags,
       icon: ShoppingBag,
       iconBgColor: "bg-[#8b3ff2]",
     },
     {
       label: "Total Cost",
-      value: formatCurrency(totalCost),
+      value: totalCost,
       icon: CircleDollarSign,
       iconBgColor: "bg-[#00d26a]",
     },
     {
       label: "Current value",
-      value: formatCurrency(currentValue),
+      value: currentValue,
       icon: ChartNoAxesColumnIncreasing,
       iconBgColor: "bg-[#ff6a1a]",
     },

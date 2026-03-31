@@ -54,6 +54,10 @@ const DashboardContainer = () => {
 
           <Skeleton className="h-[420px] w-full" />
         </>
+      ) : !stats ? (
+        <div className="rounded-lg border border-dashed border-border bg-card px-4 py-8 text-center text-sm text-muted-foreground">
+          No dashboard data available.
+        </div>
       ) : (
         <>
           <TopStats stats={stats} />

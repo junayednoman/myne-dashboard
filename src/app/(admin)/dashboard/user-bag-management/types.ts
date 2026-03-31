@@ -5,6 +5,7 @@ export type UserBagItem = {
   ownerName: string;
   ownerImage: string;
   brand: string;
+  brandLogo?: string;
   model: string;
   purchaseYear: number;
   cost: number;

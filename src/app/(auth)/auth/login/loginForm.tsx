@@ -4,18 +4,35 @@ import { AInput } from "@/components/form/AInput";
 import { Button } from "@/components/ui/button";
 import { loginSchema } from "@/validations/auth/login.validation";
 import { LoginFormValues } from "@/types/auth/login.types";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import handleMutation from "@/utils/handleMutation";
 import { useAdminLoginMutation } from "@/redux/api/authApi";
 
 const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [adminLogin] = useAdminLoginMutation();
+
+  useEffect(() => {
+    const from = searchParams.get("from");
+    if (from) {
+      sessionStorage.setItem("redirectAfterLogin", from);
+    }
+  }, [searchParams]);
 
   const onSubmit = async (data: LoginFormValues) => {
     await handleMutation(data, adminLogin, "Logging in...", () => {
-      router.push("/dashboard");
+      const from =
+        searchParams.get("from") ??
+        sessionStorage.getItem("redirectAfterLogin");
+      const safeRedirect =
+        from && from.startsWith("/") && !from.startsWith("/auth")
+          ? from
+          : "/dashboard";
+      sessionStorage.removeItem("redirectAfterLogin");
+      router.replace(safeRedirect);
     });
   };
   return (

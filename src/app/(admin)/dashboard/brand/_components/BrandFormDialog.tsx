@@ -10,53 +10,66 @@ import AForm from "@/components/form/AForm";
 import { AInput } from "@/components/form/AInput";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-const brandSchema = z.object({
+const createBrandSchema = z.object({
   brandName: z.string().min(2, "Brand name must be at least 2 characters"),
 });
 
-export type BrandFormValues = z.infer<typeof brandSchema>;
+const editBrandSchema = z.object({
+  brandName: z.string().optional(),
+});
+
+export type BrandFormValues = z.infer<typeof createBrandSchema>;
 
 type BrandFormDialogProps = {
   open: boolean;
   mode: "add" | "edit";
   initialValues?: Partial<BrandFormValues>;
+  initialLogoUrl?: string;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (values: BrandFormValues, logoPreviewUrl: string) => void;
+  onSubmit: (values: BrandFormValues, logoFile?: File | null) => void;
 };
 
 export default function BrandFormDialog({
   open,
   mode,
   initialValues,
+  initialLogoUrl,
   onOpenChange,
   onSubmit,
 }: BrandFormDialogProps) {
   const [formKey, setFormKey] = useState(0);
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState("");
 
   useEffect(() => {
+    if (open && initialLogoUrl && !uploadPreviewUrl) {
+      setUploadPreviewUrl(initialLogoUrl);
+      setUploadFileName("Current logo");
+    }
+
     return () => {
       if (uploadPreviewUrl) {
         URL.revokeObjectURL(uploadPreviewUrl);
       }
     };
-  }, [uploadPreviewUrl]);
+  }, [open, initialLogoUrl, uploadPreviewUrl]);
 
   const reset = () => {
     setFormKey((prev) => prev + 1);
     setUploadFileName("");
     setUploadPreviewUrl("");
+    setUploadFile(null);
     setImageError("");
   };
 
   const handleSubmit = (values: BrandFormValues) => {
-    if (!uploadPreviewUrl) {
+    if (mode === "add" && !uploadFile) {
       setImageError("Brand logo is required");
       return;
     }
-    onSubmit(values, uploadPreviewUrl);
+    onSubmit(values, uploadFile);
     reset();
     onOpenChange(false);
   };
@@ -90,7 +103,7 @@ export default function BrandFormDialog({
 
         <AForm<BrandFormValues>
           key={formKey}
-          schema={brandSchema}
+          schema={mode === "edit" ? editBrandSchema : createBrandSchema}
           defaultValues={{ brandName: initialValues?.brandName ?? "" }}
           onSubmit={handleSubmit}
           className="space-y-4 pt-2"
@@ -98,7 +111,7 @@ export default function BrandFormDialog({
           <AInput
             name="brandName"
             label="Brand name"
-            required
+            required={mode === "add"}
             placeholder="Enter brand name here.."
           />
 
@@ -152,6 +165,7 @@ export default function BrandFormDialog({
                     URL.revokeObjectURL(uploadPreviewUrl);
                   }
                   const nextPreview = URL.createObjectURL(file);
+                  setUploadFile(file);
                   setUploadPreviewUrl(nextPreview);
                   setUploadFileName(file.name);
                   setImageError("");

@@ -5,22 +5,11 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import Cookies from "js-cookie";
 import { logOut } from "../slice/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl:
-    process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://10.10.10.28:5000/api/v1",
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
   credentials: "include",
-  prepareHeaders: (headers) => {
-    const myneAccessToken = Cookies.get("myneAccessToken");
-
-    // If user have a token set it in the state
-    if (myneAccessToken) {
-      headers.set("authorization", `Bearer ${myneAccessToken}`);
-    }
-    return headers;
-  },
 });
 
 const baseQueryWithReauth: BaseQueryFn<
@@ -54,6 +43,6 @@ const baseQueryWithReauth: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["auth", "dashboard", "user"],
+  tagTypes: ["auth", "dashboard", "user", "brand", "collection"],
   endpoints: () => ({}),
 });

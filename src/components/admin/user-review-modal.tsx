@@ -4,6 +4,7 @@ import Image from "next/image";
 import { X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 
 export type UserReviewData = {
   userName: string;
@@ -51,7 +52,7 @@ export default function UserReviewModal({
             <div className="flex justify-center pb-4">
               <div className="relative h-40 w-40 overflow-hidden rounded-full border-2 border-[#d7fbef]">
                 <Image
-                  src={user.avatar}
+                  src={user.avatar || PLACEHOLDER_IMAGE}
                   alt={user.userName}
                   fill
                   className="object-cover"

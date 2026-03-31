@@ -28,7 +28,10 @@ const AdminSidebar = () => {
       "logout",
       adminLogout,
       "Logging out...",
-      () => router.push("/auth/login"),
+      () => {
+        const from = encodeURIComponent(pathname);
+        router.push(`/auth/login?from=${from}`);
+      },
     );
   };
   return (

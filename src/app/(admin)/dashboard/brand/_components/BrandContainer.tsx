@@ -1,19 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 
 import AdminActionButton from "@/components/admin/admin-action-button";
 import { Input } from "@/components/ui/input";
-import { BRAND_PAGE_SIZE, DUMMY_BRANDS } from "../constants";
+import { BRAND_PAGE_SIZE } from "../constants";
 import { BrandItem } from "../types";
 import BrandDeleteDialog from "./BrandDeleteDialog";
 import BrandFormDialog, { BrandFormValues } from "./BrandFormDialog";
 import BrandItemCard from "./BrandItemCard";
 import BrandPagination from "./BrandPagination";
+import {
+  useCreateBrandMutation,
+  useDeleteBrandMutation,
+  useGetBrandsQuery,
+  useUpdateBrandMutation,
+} from "@/redux/api/brandApi";
+import handleMutation from "@/utils/handleMutation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BrandContainer() {
-  const [items, setItems] = useState<BrandItem[]>(DUMMY_BRANDS);
+  const [items, setItems] = useState<BrandItem[]>([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
@@ -21,54 +29,89 @@ export default function BrandContainer() {
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  const { data, isLoading } = useGetBrandsQuery({
+    page,
+    limit: BRAND_PAGE_SIZE,
+  });
+
+  const mappedItems = useMemo<BrandItem[]>(() => {
+    return (
+      data?.data?.map((brand) => ({
+        id: brand._id,
+        brandName: brand.brandName,
+        logo: brand.brandLogo,
+      })) ?? []
+    );
+  }, [data]);
+
+  useEffect(() => {
+    setItems(mappedItems);
+  }, [mappedItems]);
+
   const filteredItems = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) return items;
-    return items.filter((item) => item.brandName.toLowerCase().includes(query));
+    return items.filter((item) =>
+      item.brandName.toLowerCase().includes(query),
+    );
   }, [items, search]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredItems.length / BRAND_PAGE_SIZE),
-  );
+  const totalPages = Math.max(1, data?.meta?.totalPages ?? 1);
   const currentPage = Math.min(page, totalPages);
 
-  const paginatedItems = useMemo(() => {
-    const start = (currentPage - 1) * BRAND_PAGE_SIZE;
-    return filteredItems.slice(start, start + BRAND_PAGE_SIZE);
-  }, [filteredItems, currentPage]);
+  const [createBrand] = useCreateBrandMutation();
+  const [deleteBrand] = useDeleteBrandMutation();
+  const [updateBrand] = useUpdateBrandMutation();
 
   const handleDeleteConfirm = () => {
     if (!pendingDeleteId) return;
-    setItems((prev) => prev.filter((item) => item.id !== pendingDeleteId));
-    setPendingDeleteId(null);
+    handleMutation(
+      { id: pendingDeleteId },
+      deleteBrand,
+      "Deleting brand...",
+      () => {
+        setItems((prev) => prev.filter((item) => item.id !== pendingDeleteId));
+        setPendingDeleteId(null);
+      },
+    );
   };
 
   const handleFormSubmit = (
     values: BrandFormValues,
-    logoPreviewUrl: string,
+    logoFile?: File | null,
   ) => {
     if (formMode === "edit" && editingId) {
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === editingId
-            ? {
-                ...item,
-                brandName: `Brand: ${values.brandName}`,
-                logo: logoPreviewUrl,
-              }
-            : item,
-        ),
+      const current = items.find((item) => item.id === editingId);
+      const nextName =
+        values.brandName && values.brandName.trim()
+          ? values.brandName
+          : current?.brandName ?? "";
+      handleMutation(
+        { id: editingId, brandName: nextName, brandLogo: logoFile || undefined },
+        updateBrand,
+        "Updating brand...",
+        () => {
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === editingId
+                ? {
+                    ...item,
+                    brandName: nextName,
+                  }
+                : item,
+            ),
+          );
+        },
       );
       return;
     }
 
-    const newItem: BrandItem = {
-      id: `BR-${Date.now()}`,
-      brandName: `Brand: ${values.brandName}`,
-      logo: logoPreviewUrl,
-    };
-    setItems((prev) => [newItem, ...prev]);
+    if (!logoFile) return;
+    handleMutation(
+      { brandName: values.brandName, brandLogo: logoFile },
+      createBrand,
+      "Creating brand...",
+    );
   };
 
   const editingItem = items.find((item) => item.id === editingId);
@@ -103,20 +146,32 @@ export default function BrandContainer() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
-          {paginatedItems.map((item) => (
-            <BrandItemCard
-              key={item.id}
-              item={item}
-              onDelete={setPendingDeleteId}
-              onEdit={(id) => {
-                setFormMode("edit");
-                setEditingId(id);
-                setIsFormOpen(true);
-              }}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <Skeleton key={index} className="h-[220px] w-full" />
+            ))}
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div className="flex items-center justify-center rounded-md border border-dashed border-border px-4 py-10 text-sm text-muted-foreground">
+            No brand data available.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+            {filteredItems.map((item) => (
+              <BrandItemCard
+                key={item.id}
+                item={item}
+                onDelete={setPendingDeleteId}
+                onEdit={(id) => {
+                  setFormMode("edit");
+                  setEditingId(id);
+                  setIsFormOpen(true);
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         <BrandPagination
           currentPage={currentPage}
@@ -141,11 +196,11 @@ export default function BrandContainer() {
         initialValues={
           formMode === "edit"
             ? {
-                brandName:
-                  editingItem?.brandName.replace("Brand: ", "") ?? "Hermes",
+                brandName: editingItem?.brandName ?? "Hermes",
               }
             : undefined
         }
+        initialLogoUrl={formMode === "edit" ? editingItem?.logo : undefined}
         onOpenChange={setIsFormOpen}
         onSubmit={handleFormSubmit}
       />

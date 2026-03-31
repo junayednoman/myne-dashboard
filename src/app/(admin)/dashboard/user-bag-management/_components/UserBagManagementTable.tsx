@@ -15,6 +15,8 @@ export default function UserBagManagementTable({
   onView,
   onDelete,
 }: UserBagManagementTableProps) {
+  const placeholderImage =
+    "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
   return (
     <table className="w-full">
       <thead>
@@ -62,7 +64,7 @@ export default function UserBagManagementTable({
                 <div className="flex items-center gap-3">
                   <div className="relative h-10 w-10 overflow-hidden rounded-md bg-muted">
                     <Image
-                      src={bag.bagImage}
+                      src={bag.bagImage || placeholderImage}
                       alt={bag.bagName}
                       fill
                       className="object-cover"
@@ -78,7 +80,7 @@ export default function UserBagManagementTable({
                 <div className="flex items-center gap-3">
                   <div className="relative h-9 w-9 overflow-hidden rounded-full bg-muted">
                     <Image
-                      src={bag.ownerImage}
+                      src={bag.ownerImage || placeholderImage}
                       alt={bag.ownerName}
                       fill
                       className="object-cover"
@@ -90,8 +92,26 @@ export default function UserBagManagementTable({
                 </div>
               </td>
 
-              <td className="px-6 py-4 text-sm text-muted-foreground">
-                {bag.brand}
+              <td className="px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="relative h-9 w-9 overflow-hidden rounded-md bg-muted">
+                    {bag.brandLogo ? (
+                      <Image
+                        src={bag.brandLogo}
+                        alt={bag.brand || "Brand logo"}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center text-xs font-semibold text-muted-foreground">
+                        {(bag.brand || "B").slice(0, 1).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {bag.brand || "Unknown brand"}
+                  </span>
+                </div>
               </td>
               <td className="px-6 py-4 text-sm text-muted-foreground">
                 {bag.model}

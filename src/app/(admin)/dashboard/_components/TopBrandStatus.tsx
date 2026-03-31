@@ -1,7 +1,8 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import Image from "next/image";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 
 export interface BrandStatusItem {
   id: string;
@@ -60,7 +61,7 @@ export function TopBrandStatus({
             <div className="flex min-w-0 items-center gap-4">
               <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                 <Image
-                  src={item.brandLogo}
+                  src={item.brandLogo || PLACEHOLDER_IMAGE}
                   alt={item.brandName}
                   fill
                   className="object-cover"
@@ -90,8 +91,18 @@ export function TopBrandStatus({
                   {formatCurrency(item.currentValue)}
                 </p>
                 <div className="flex items-center gap-1">
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                  <span className="text-sm font-semibold text-green-500">
+                  {item.percentageChange >= 0 ? (
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <TrendingDown className="h-4 w-4 text-red-500" />
+                  )}
+                  <span
+                    className={`text-sm font-semibold ${
+                      item.percentageChange >= 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
                     {formatPercentage(item.percentageChange)}
                   </span>
                 </div>

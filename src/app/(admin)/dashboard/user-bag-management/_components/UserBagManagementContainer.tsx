@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import BagDetailsModal from "./BagDetailsModal";
 import UserBagDeleteDialog from "./UserBagDeleteDialog";
@@ -8,10 +8,14 @@ import UserBagManagementTable from "./UserBagManagementTable";
 import UserBagPagination from "./UserBagPagination";
 import { UserBagItem } from "../types";
 import { HISTORY_YEAR_OPTIONS } from "../utils";
-import { DUMMY_USER_BAGS, USER_BAG_PAGE_SIZE } from "../constants";
+import { USER_BAG_PAGE_SIZE } from "../constants";
+import { useGetCollectionsQuery } from "@/redux/api/collectionApi";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserBagManagementContainer() {
-  const [bags, setBags] = useState<UserBagItem[]>(DUMMY_USER_BAGS);
+  const placeholderImage =
+    "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
+  const [bags, setBags] = useState<UserBagItem[]>([]);
   const [page, setPage] = useState(1);
   const [reviewBagId, setReviewBagId] = useState<string | null>(null);
   const [pendingDeleteBagId, setPendingDeleteBagId] = useState<string | null>(
@@ -21,13 +25,45 @@ export default function UserBagManagementContainer() {
     HISTORY_YEAR_OPTIONS[5],
   );
 
-  const totalPages = Math.max(1, Math.ceil(bags.length / USER_BAG_PAGE_SIZE));
+  const { data, isLoading } = useGetCollectionsQuery({
+    page,
+    limit: USER_BAG_PAGE_SIZE,
+  });
+
+  const mappedBags = useMemo<UserBagItem[]>(() => {
+    return (
+      data?.data?.map((item) => ({
+        id: item._id,
+        bagName: item.model?.modelName ?? "Bag",
+        bagImage:
+          item.primaryImage ??
+          item.model?.modelImage ??
+          item.brand?.brandLogo ??
+          placeholderImage,
+        ownerName: item.user?.name ?? "User",
+        ownerImage: item.user?.avatar ?? placeholderImage,
+        brand: item.brand?.brandName ?? "",
+        brandLogo: item.brand?.brandLogo ?? placeholderImage,
+        model: item.model?.modelName ?? "",
+        purchaseYear: item.purchaseDate
+          ? new Date(item.purchaseDate).getFullYear()
+          : new Date(item.createdAt).getFullYear(),
+        cost: item.purchasePrice ?? 0,
+        currentValue: item.priceStatus?.currentValue ?? 0,
+      })) ?? []
+    );
+  }, [data]);
+
+  useEffect(() => {
+    setBags(mappedBags);
+  }, [mappedBags]);
+
+  const totalPages = Math.max(1, data?.meta?.totalPages ?? 1);
   const currentPage = Math.min(page, totalPages);
 
   const paginatedBags = useMemo(() => {
-    const start = (currentPage - 1) * USER_BAG_PAGE_SIZE;
-    return bags.slice(start, start + USER_BAG_PAGE_SIZE);
-  }, [bags, currentPage]);
+    return bags;
+  }, [bags]);
 
   const selectedBag = bags.find((item) => item.id === reviewBagId) ?? null;
 
@@ -46,20 +82,43 @@ export default function UserBagManagementContainer() {
           </h2>
         </div>
 
-        <UserBagManagementTable
-          bags={paginatedBags}
-          onView={(id) => {
-            setReviewBagId(id);
-            setHistoryYear(HISTORY_YEAR_OPTIONS[5]);
-          }}
-          onDelete={setPendingDeleteBagId}
-        />
+        {isLoading ? (
+          <div className="space-y-3 px-6 py-4">
+            <div className="grid grid-cols-7 gap-4">
+              {Array.from({ length: 7 }).map((_, index) => (
+                <Skeleton key={index} className="h-5 w-full" />
+              ))}
+            </div>
+            {Array.from({ length: USER_BAG_PAGE_SIZE }).map((_, index) => (
+              <Skeleton key={index} className="h-12 w-full" />
+            ))}
+            <div className="flex items-center justify-between pt-2">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-9 w-40" />
+            </div>
+          </div>
+        ) : paginatedBags.length === 0 ? (
+          <div className="flex items-center justify-center px-6 py-10 text-sm text-muted-foreground">
+            No user bag data available.
+          </div>
+        ) : (
+          <>
+            <UserBagManagementTable
+              bags={paginatedBags}
+              onView={(id) => {
+                setReviewBagId(id);
+                setHistoryYear(HISTORY_YEAR_OPTIONS[5]);
+              }}
+              onDelete={setPendingDeleteBagId}
+            />
 
-        <UserBagPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+            <UserBagPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </>
+        )}
       </div>
 
       <UserBagDeleteDialog
@@ -75,6 +134,7 @@ export default function UserBagManagementContainer() {
       <BagDetailsModal
         open={reviewBagId !== null}
         bag={selectedBag}
+        bagId={reviewBagId}
         historyYear={historyYear}
         onHistoryYearChange={setHistoryYear}
         onOpenChange={(open) => {

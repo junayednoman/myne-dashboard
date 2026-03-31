@@ -26,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMemo } from "react";
+import { useGetCollectionByIdQuery } from "@/redux/api/collectionApi";
 import { UserBagItem } from "../types";
 import {
   buildHistoricalValues,
@@ -36,6 +38,7 @@ import {
 type BagDetailsModalProps = {
   open: boolean;
   bag: UserBagItem | null;
+  bagId: string | null;
   historyYear: string;
   onHistoryYearChange: (year: string) => void;
   onOpenChange: (open: boolean) => void;
@@ -44,10 +47,68 @@ type BagDetailsModalProps = {
 export default function BagDetailsModal({
   open,
   bag,
+  bagId,
   historyYear,
   onHistoryYearChange,
   onOpenChange,
 }: BagDetailsModalProps) {
+  const { data } = useGetCollectionByIdQuery(bagId ?? "", {
+    skip: !bagId || !open,
+  });
+
+  const details = data?.data;
+  const placeholderImage =
+    "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
+  const bagImage =
+    details?.primaryImage ||
+    details?.images?.[0] ||
+    details?.model?.modelImage ||
+    bag?.bagImage ||
+    placeholderImage;
+  const bagName = details?.model?.modelName || bag?.bagName || "Bag";
+  const brandName = details?.brand?.brandName || bag?.brand || "N/A";
+  const purchaseYear =
+    details?.productionYear ??
+    (details?.purchaseDate
+      ? new Date(details.purchaseDate).getFullYear()
+      : bag?.purchaseYear);
+  const purchasePrice = details?.purchasePrice ?? bag?.cost ?? 0;
+  const currentValue = details?.priceStatus?.currentValue ?? bag?.currentValue ?? 0;
+  const changePct = details?.priceStatus?.changePercentage;
+  const isUp =
+    changePct !== undefined
+      ? changePct >= 0
+      : currentValue >= purchasePrice;
+  const pctValue =
+    changePct !== undefined
+      ? Math.abs(changePct)
+      : purchasePrice
+        ? (Math.abs(currentValue - purchasePrice) / purchasePrice) * 100
+        : 0;
+
+  const storyItems = useMemo(
+    () => [
+      {
+        label: "Purchase Location:",
+        value: details?.purchaseLocation ?? "N/A",
+      },
+      {
+        label: "Purchase Date:",
+        value: details?.purchaseDate
+          ? new Date(details.purchaseDate).toLocaleDateString()
+          : "N/A",
+      },
+      {
+        label: "Waiting Time:",
+        value:
+          details?.waitingTimeInDays !== undefined
+            ? `${details.waitingTimeInDays} days`
+            : "N/A",
+      },
+    ],
+    [details],
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -75,8 +136,8 @@ export default function BagDetailsModal({
               <div className="flex justify-center">
                 <div className="relative h-56 w-56">
                   <Image
-                    src={bag.bagImage}
-                    alt={bag.bagName}
+                    src={bagImage}
+                    alt={bagName}
                     fill
                     className="object-contain"
                   />
@@ -98,28 +159,36 @@ export default function BagDetailsModal({
               <div className="space-y-0 px-4 py-2 text-sm">
                 <div className="flex items-center justify-between border-b border-border py-2.5">
                   <span className="text-muted-foreground">Brand:</span>
-                  <span className="text-card-foreground">{bag.brand}</span>
+                  <span className="text-card-foreground">{brandName}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border py-2.5">
                   <span className="text-muted-foreground">Model:</span>
-                  <span className="text-card-foreground">{bag.model}</span>
+                  <span className="text-card-foreground">
+                    {details?.model?.modelName ?? bag?.model ?? "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border py-2.5">
                   <span className="text-muted-foreground">Color:</span>
-                  <span className="text-card-foreground">Back & White</span>
+                  <span className="text-card-foreground">
+                    {details?.bagColor ?? "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border py-2.5">
                   <span className="text-muted-foreground">Leather Type:</span>
-                  <span className="text-card-foreground">Clemence</span>
+                  <span className="text-card-foreground">
+                    {details?.latherType ?? "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border py-2.5">
                   <span className="text-muted-foreground">Condition:</span>
-                  <span className="text-card-foreground">Excellent</span>
+                  <span className="text-card-foreground">
+                    {details?.condition ?? "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-2.5">
                   <span className="text-muted-foreground">Year:</span>
                   <span className="text-card-foreground">
-                    {bag.purchaseYear}
+                    {purchaseYear ?? "N/A"}
                   </span>
                 </div>
               </div>
@@ -129,32 +198,29 @@ export default function BagDetailsModal({
               <div className="rounded-xl border border-border bg-card/80 p-4">
                 <p className="text-xs text-muted-foreground">Purchase Price</p>
                 <p className="mt-1 text-2xl font-bold text-card-foreground">
-                  {formatCurrency(bag.cost)}
+                  {formatCurrency(purchasePrice)}
                 </p>
               </div>
               <div className="rounded-xl border border-border bg-card/80 p-4">
                 <p className="text-xs text-green-500">Current Value</p>
                 <div className="mt-1 flex items-end justify-between gap-2">
                   <p className="text-2xl font-bold text-card-foreground">
-                    {formatCurrency(bag.currentValue)}
+                    {formatCurrency(currentValue)}
                   </p>
                   <p
                     className={`inline-flex items-center gap-1 text-sm font-semibold ${
-                      bag.currentValue >= bag.cost
+                      isUp
                         ? "text-green-500"
                         : "text-destructive"
                     }`}
                   >
-                    {bag.currentValue >= bag.cost ? (
+                    {isUp ? (
                       <TrendingUp className="h-4 w-4" />
                     ) : (
                       <TrendingDown className="h-4 w-4" />
                     )}
-                    {bag.currentValue >= bag.cost ? "+" : "-"}
-                    {(
-                      (Math.abs(bag.currentValue - bag.cost) / bag.cost) *
-                      100
-                    ).toFixed(1)}
+                    {isUp ? "+" : "-"}
+                    {pctValue.toFixed(1)}
                     %
                   </p>
                 </div>
@@ -183,8 +249,8 @@ export default function BagDetailsModal({
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={buildHistoricalValues(
-                      bag.cost,
-                      bag.currentValue,
+                      purchasePrice,
+                      currentValue,
                       Number(historyYear),
                     )}
                   >
@@ -251,28 +317,19 @@ export default function BagDetailsModal({
                 Ownership Story
               </h3>
               <div className="space-y-2 text-sm">
-                <p className="flex items-center justify-between border-b border-border py-1.5">
-                  <span className="text-muted-foreground">
-                    Purchase Location:
-                  </span>
-                  <span className="text-card-foreground">
-                    Chanel Boutique, Rue Cambon Paris
-                  </span>
-                </p>
-                <p className="flex items-center justify-between border-b border-border py-1.5">
-                  <span className="text-muted-foreground">Purchase Date:</span>
-                  <span className="text-card-foreground">March 15, 2023</span>
-                </p>
-                <p className="flex items-center justify-between border-b border-border py-1.5">
-                  <span className="text-muted-foreground">Waiting Time:</span>
-                  <span className="text-card-foreground">6 months</span>
-                </p>
+                {storyItems.map((item) => (
+                  <p
+                    key={item.label}
+                    className="flex items-center justify-between border-b border-border py-1.5"
+                  >
+                    <span className="text-muted-foreground">{item.label}</span>
+                    <span className="text-card-foreground">{item.value}</span>
+                  </p>
+                ))}
                 <div className="pt-1">
                   <p className="mb-1 text-muted-foreground">My Story:</p>
                   <p className="text-muted-foreground">
-                    This was a dream bag I had been wanting for years. After
-                    months on the waitlist, I received the call during a trip to
-                    Paris.
+                    {details?.notes ?? "No notes provided."}
                   </p>
                 </div>
               </div>

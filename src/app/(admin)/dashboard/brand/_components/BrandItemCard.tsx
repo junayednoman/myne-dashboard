@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Pencil } from "lucide-react";
 
 import { BrandItem } from "../types";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 
 type BrandItemCardProps = {
   item: BrandItem;
@@ -18,7 +19,7 @@ export default function BrandItemCard({
     <div className="rounded-lg border border-border bg-[#2d2f34]/80 p-3">
       <div className="relative mb-3 h-[130px] overflow-hidden rounded-md border border-border bg-muted/20">
         <Image
-          src={item.logo}
+          src={item.logo || PLACEHOLDER_IMAGE}
           alt={item.brandName}
           fill
           className="object-contain p-2 py-6"

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Eye, Lock, Unlock } from "lucide-react";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 import {
   Select,
   SelectContent,
@@ -82,7 +83,7 @@ export default function UserManagementTable({
               <div className="flex items-center gap-3">
                 <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-muted">
                   <Image
-                    src={user.avatar}
+                    src={user.avatar || PLACEHOLDER_IMAGE}
                     alt={user.userName}
                     fill
                     className="object-cover"

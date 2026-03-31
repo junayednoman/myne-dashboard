@@ -5,6 +5,7 @@ import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 interface ProfileHeaderProps {
   name: string;
   role: string;
@@ -14,14 +15,12 @@ interface ProfileHeaderProps {
 const ProfileHeader = ({ name, role, avatar }: ProfileHeaderProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewAvatar, setPreviewAvatar] = useState(
-    avatar ||
-      "https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg",
+    avatar || PLACEHOLDER_IMAGE,
   );
 
   useEffect(() => {
     setPreviewAvatar(
-      avatar ||
-        "https://thumbs.dreamstime.com/b/cute-cartoon-girl-avatar-long-brown-hair-friendly-expression-various-uses-showcasing-young-female-character-371428712.jpg",
+      avatar || PLACEHOLDER_IMAGE,
     );
   }, [avatar]);
 
