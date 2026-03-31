@@ -4,12 +4,7 @@ export const HISTORY_YEAR_OPTIONS = Array.from({ length: 11 }, (_, index) =>
   String(CURRENT_YEAR - 5 + index),
 );
 
-export const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
+export const formatCurrency = (value: number) => String(value);
 
 export const buildHistoricalValues = (
   cost: number,

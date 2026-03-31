@@ -50,6 +50,7 @@ export default function UserBagManagementContainer() {
           : new Date(item.createdAt).getFullYear(),
         cost: item.purchasePrice ?? 0,
         currentValue: item.priceStatus?.currentValue ?? 0,
+        changePercentage: item.priceStatus?.changePercentage,
       })) ?? []
     );
   }, [data]);

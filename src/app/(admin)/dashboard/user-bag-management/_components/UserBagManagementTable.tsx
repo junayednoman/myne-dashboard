@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Eye, Trash2, TrendingDown, TrendingUp } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 
 import { UserBagItem } from "../types";
 import { formatCurrency } from "../utils";
@@ -49,10 +49,6 @@ export default function UserBagManagementTable({
       </thead>
       <tbody>
         {bags.map((bag, index) => {
-          const delta = bag.currentValue - bag.cost;
-          const isUp = delta >= 0;
-          const pct = (Math.abs(delta) / bag.cost) * 100;
-
           return (
             <tr
               key={bag.id}
@@ -128,19 +124,17 @@ export default function UserBagManagementTable({
                   <span className="text-sm font-medium text-card-foreground">
                     {formatCurrency(bag.currentValue)}
                   </span>
-                  <span
-                    className={`inline-flex items-center gap-1 text-xs font-semibold ${
-                      isUp ? "text-green-500" : "text-destructive"
-                    }`}
-                  >
-                    {isUp ? (
-                      <TrendingUp className="h-3.5 w-3.5" />
-                    ) : (
-                      <TrendingDown className="h-3.5 w-3.5" />
-                    )}
-                    {isUp ? "+" : "-"}
-                    {pct.toFixed(1)}%
-                  </span>
+                  {bag.changePercentage !== undefined ? (
+                    <span
+                      className={`text-xs font-semibold ${
+                        bag.changePercentage >= 0
+                          ? "text-green-500"
+                          : "text-destructive"
+                      }`}
+                    >
+                      {bag.changePercentage}%
+                    </span>
+                  ) : null}
                 </div>
               </td>
 

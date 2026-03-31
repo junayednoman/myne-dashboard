@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { z } from "zod";
 import { AInput } from "@/components/form/AInput";
 import AForm from "@/components/form/AForm";
 import AdminActionButton from "@/components/admin/admin-action-button";
 
 import { toast } from "sonner";
+import { useUpdateAdminProfileMutation } from "@/redux/api/profileApi";
 
 const editProfileSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
+  phone: z.string().min(1, "Phone is required"),
+  location: z.string().min(1, "Location is required"),
 });
 
 type EditProfileFormValues = z.infer<typeof editProfileSchema>;
@@ -20,14 +22,26 @@ interface EditProfileFormProps {
 }
 
 const EditProfileForm = ({ defaultValues }: EditProfileFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [updateAdminProfile, { isLoading }] = useUpdateAdminProfileMutation();
+  const formKey = JSON.stringify({
+    name: defaultValues?.name ?? "",
+    email: defaultValues?.email ?? "",
+    phone: defaultValues?.phone ?? "",
+    location: defaultValues?.location ?? "",
+  });
 
   const handleEditProfile = async (data: EditProfileFormValues) => {
-    void data;
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    toast.success("Profile updated locally.");
-    setIsLoading(false);
+    try {
+      await updateAdminProfile({
+        name: data.name,
+        phone: data.phone,
+        location: data.location,
+      }).unwrap();
+      toast.success("Profile updated successfully.");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile. Please try again.");
+    }
   };
 
   return (
@@ -37,6 +51,7 @@ const EditProfileForm = ({ defaultValues }: EditProfileFormProps) => {
       </h3>
 
       <AForm<EditProfileFormValues>
+        key={formKey}
         schema={editProfileSchema}
         defaultValues={defaultValues as EditProfileFormValues | undefined}
         onSubmit={handleEditProfile}
@@ -53,6 +68,18 @@ const EditProfileForm = ({ defaultValues }: EditProfileFormProps) => {
           type="email"
           disabled
           placeholder="Enter your email"
+          required
+        />
+        <AInput
+          name="phone"
+          label="Phone"
+          placeholder="Enter your phone number"
+          required
+        />
+        <AInput
+          name="location"
+          label="Location"
+          placeholder="Enter your location"
           required
         />
         <AdminActionButton

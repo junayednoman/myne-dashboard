@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
 import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
+import { useUpdateAdminAvatarMutation } from "@/redux/api/profileApi";
 interface ProfileHeaderProps {
   name: string;
   role: string;
@@ -17,6 +18,7 @@ const ProfileHeader = ({ name, role, avatar }: ProfileHeaderProps) => {
   const [previewAvatar, setPreviewAvatar] = useState(
     avatar || PLACEHOLDER_IMAGE,
   );
+  const [updateAdminAvatar, { isLoading }] = useUpdateAdminAvatarMutation();
 
   useEffect(() => {
     setPreviewAvatar(
@@ -28,7 +30,7 @@ const ProfileHeader = ({ name, role, avatar }: ProfileHeaderProps) => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -45,7 +47,16 @@ const ProfileHeader = ({ name, role, avatar }: ProfileHeaderProps) => {
       return;
     }
     setPreviewAvatar(URL.createObjectURL(file));
-    toast.success("Profile image updated locally.");
+
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      await updateAdminAvatar(formData).unwrap();
+      toast.success("Profile image updated successfully.");
+    } catch (error) {
+      console.error("Failed to update profile image:", error);
+      toast.error("Failed to update profile image. Please try again.");
+    }
   };
 
   return (
@@ -64,6 +75,7 @@ const ProfileHeader = ({ name, role, avatar }: ProfileHeaderProps) => {
             size="icon"
             className="absolute bottom-0 right-0 h-10 w-10 rounded-full border border-white/50 bg-white text-black hover:bg-white/90 shadow-lg"
             onClick={handleEditClick}
+            disabled={isLoading}
           >
             <Camera className="h-5 w-5" />
           </Button>

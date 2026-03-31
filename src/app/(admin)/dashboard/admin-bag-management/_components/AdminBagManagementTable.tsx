@@ -8,11 +8,15 @@ import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
 type AdminBagManagementTableProps = {
   bags: AdminBagItem[];
   onDelete: (id: string) => void;
+  onView: (id: string) => void;
+  onEdit: (id: string) => void;
 };
 
 export default function AdminBagManagementTable({
   bags,
   onDelete,
+  onView,
+  onEdit,
 }: AdminBagManagementTableProps) {
   return (
     <table className="w-full">
@@ -71,12 +75,14 @@ export default function AdminBagManagementTable({
             <td className="px-6 py-4">
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => onView(bag.id)}
                   className="inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-card-foreground"
                   aria-label="View bag"
                 >
                   <Eye className="h-5 w-5" />
                 </button>
                 <button
+                  onClick={() => onEdit(bag.id)}
                   className="inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-card-foreground"
                   aria-label="Edit bag"
                 >

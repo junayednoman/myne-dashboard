@@ -10,4 +10,5 @@ export type UserBagItem = {
   purchaseYear: number;
   cost: number;
   currentValue: number;
+  changePercentage?: number;
 };

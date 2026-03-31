@@ -49,7 +49,7 @@ const LoginForm = () => {
         onSubmit={onSubmit}
         defaultValues={{
           email: "junayednoman05@gmail.com",
-          password: "@Strongpass1",
+          password: "@Strongpass123",
           rememberMe: false,
         }}
         className="mt-8 space-y-5"

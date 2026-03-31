@@ -19,7 +19,7 @@ export default function UserBagPagination({
   onPageChange,
 }: UserBagPaginationProps) {
   return (
-    <div className="border-t border-border px-4 py-3 md:px-6">
+    <div className="mt-4 border-t border-border px-4 py-3 md:px-6">
       <Pagination className="justify-end">
         <PaginationContent>
           <PaginationItem>

@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Save, Check, Loader2 } from "lucide-react";
 import JoditTextEditor from "@/components/form/ATextEditor";
 import { toast } from "sonner";
+import {
+  useGetPrivacyPolicyQuery,
+  useGetTermsAndConditionsQuery,
+  useUpdatePrivacyPolicyMutation,
+  useUpdateTermsAndConditionsMutation,
+} from "@/redux/api/legalApi";
 
 interface ContentSection {
   id: string;
@@ -14,30 +20,49 @@ interface ContentSection {
 }
 
 const SettingsTabsEditor = () => {
-  const [activeTab, setActiveTab] = useState("about");
+  const [activeTab, setActiveTab] = useState("terms");
   const [savingStates, setSavingStates] = useState<Record<string, boolean>>({});
   const [savedStates, setSavedStates] = useState<Record<string, boolean>>({});
 
   const [contentSections, setContentSections] = useState<ContentSection[]>([
     {
-      id: "about",
-      title: "About Us",
-      content:
-        "<p>Myne is a premium bag marketplace focused on trusted resale, authentication, and transparent value tracking for collectors.</p>",
-    },
-    {
       id: "terms",
       title: "Terms & Conditions",
-      content:
-        "<p>Users must provide accurate item details and authentic products only. Listing violations may result in content removal or account suspension.</p>",
+      content: "",
     },
     {
       id: "privacy",
       title: "Privacy Policy",
-      content:
-        "<p>We store account and transaction data to provide platform services. Sensitive information is protected with standard security controls.</p>",
+      content: "",
     },
   ]);
+
+  const { data: termsData } = useGetTermsAndConditionsQuery();
+  const { data: privacyData } = useGetPrivacyPolicyQuery();
+  const [updateTermsAndConditions] = useUpdateTermsAndConditionsMutation();
+  const [updatePrivacyPolicy] = useUpdatePrivacyPolicyMutation();
+
+  useEffect(() => {
+    if (!termsData?.data?.description) return;
+    setContentSections((prev) =>
+      prev.map((section) =>
+        section.id === "terms"
+          ? { ...section, content: termsData.data.description }
+          : section,
+      ),
+    );
+  }, [termsData?.data?.description]);
+
+  useEffect(() => {
+    if (!privacyData?.data?.description) return;
+    setContentSections((prev) =>
+      prev.map((section) =>
+        section.id === "privacy"
+          ? { ...section, content: privacyData.data.description }
+          : section,
+      ),
+    );
+  }, [privacyData?.data?.description]);
 
   const handleContentChange = (sectionId: string, content: string) => {
     setContentSections((prev) =>
@@ -55,7 +80,11 @@ const SettingsTabsEditor = () => {
     setSavingStates((prev) => ({ ...prev, [sectionId]: true }));
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      if (sectionId === "terms") {
+        await updateTermsAndConditions({ description: section.content }).unwrap();
+      } else if (sectionId === "privacy") {
+        await updatePrivacyPolicy({ description: section.content }).unwrap();
+      }
       toast.success(`${section.title} updated successfully!`);
 
       setSavedStates((prev) => ({ ...prev, [sectionId]: true }));
@@ -80,13 +109,7 @@ const SettingsTabsEditor = () => {
           onValueChange={setActiveTab}
           className="flex flex-col"
         >
-          <TabsList className="grid h-14 w-full grid-cols-3 bg-card">
-            <TabsTrigger
-              value="about"
-              className="text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-black"
-            >
-              About Us
-            </TabsTrigger>
+          <TabsList className="grid h-14 w-full grid-cols-2 bg-card">
             <TabsTrigger
               value="terms"
               className="text-muted-foreground data-[state=active]:bg-white data-[state=active]:text-black"

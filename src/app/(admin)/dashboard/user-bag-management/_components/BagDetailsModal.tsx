@@ -26,9 +26,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useGetCollectionByIdQuery } from "@/redux/api/collectionApi";
 import { UserBagItem } from "../types";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   buildHistoricalValues,
   formatCurrency,
@@ -52,19 +53,29 @@ export default function BagDetailsModal({
   onHistoryYearChange,
   onOpenChange,
 }: BagDetailsModalProps) {
-  const { data } = useGetCollectionByIdQuery(bagId ?? "", {
-    skip: !bagId || !open,
-  });
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const { data, isLoading, isError, error } = useGetCollectionByIdQuery(
+    bagId ?? "",
+    {
+      skip: !bagId || !open,
+    },
+  );
 
   const details = data?.data;
   const placeholderImage =
     "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
+  const imageCandidates = useMemo(() => {
+    const images = details?.images?.length ? details.images : [];
+    const primary = details?.primaryImage ? [details.primaryImage] : [];
+    const fallback =
+      details?.model?.modelImage || bag?.bagImage || placeholderImage;
+    const combined = [...primary, ...images];
+    if (combined.length === 0) return [fallback];
+    const unique = Array.from(new Set(combined));
+    return unique;
+  }, [details, bag?.bagImage]);
   const bagImage =
-    details?.primaryImage ||
-    details?.images?.[0] ||
-    details?.model?.modelImage ||
-    bag?.bagImage ||
-    placeholderImage;
+    imageCandidates[activeImageIndex] ?? imageCandidates[0] ?? placeholderImage;
   const bagName = details?.model?.modelName || bag?.bagName || "Bag";
   const brandName = details?.brand?.brandName || bag?.brand || "N/A";
   const purchaseYear =
@@ -73,12 +84,11 @@ export default function BagDetailsModal({
       ? new Date(details.purchaseDate).getFullYear()
       : bag?.purchaseYear);
   const purchasePrice = details?.purchasePrice ?? bag?.cost ?? 0;
-  const currentValue = details?.priceStatus?.currentValue ?? bag?.currentValue ?? 0;
+  const currentValue =
+    details?.priceStatus?.currentValue ?? bag?.currentValue ?? 0;
   const changePct = details?.priceStatus?.changePercentage;
   const isUp =
-    changePct !== undefined
-      ? changePct >= 0
-      : currentValue >= purchasePrice;
+    changePct !== undefined ? changePct >= 0 : currentValue >= purchasePrice;
   const pctValue =
     changePct !== undefined
       ? Math.abs(changePct)
@@ -109,6 +119,28 @@ export default function BagDetailsModal({
     [details],
   );
 
+  const totalImages = imageCandidates.length;
+
+  const handlePrev = () => {
+    if (totalImages <= 1) return;
+    setActiveImageIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    if (totalImages <= 1) return;
+    setActiveImageIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
+  };
+
+  const errorMessage = (() => {
+    if (!isError) return "";
+    if (typeof error === "string") return error;
+    if (error && typeof error === "object" && "data" in error) {
+      const dataError = (error as { data?: { message?: string } }).data;
+      if (dataError?.message) return dataError.message;
+    }
+    return "Failed to load bag details.";
+  })();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -116,13 +148,38 @@ export default function BagDetailsModal({
         showCloseButton={false}
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card/95 p-0 backdrop-blur-md [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
-        {bag && (
+        {isLoading ? (
+          <div className="space-y-4 p-4">
+            <Skeleton className="h-[260px] w-full" />
+            <Skeleton className="h-52 w-full" />
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <Skeleton className="h-56 w-full" />
+            <Skeleton className="h-40 w-full" />
+          </div>
+        ) : isError || !details ? (
+          <div className="p-4">
+            <div className="rounded-lg border border-dashed border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground">
+              {errorMessage || "No bag details available."}
+            </div>
+          </div>
+        ) : (
           <div className="space-y-3 p-4">
             <div className="relative rounded-xl border border-border bg-black px-10 py-6">
-              <button className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 p-1.5 text-white/70">
+              <button
+                onClick={handlePrev}
+                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 p-1.5 text-white/70"
+                aria-label="Previous image"
+              >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 p-1.5 text-white/70">
+              <button
+                onClick={handleNext}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 p-1.5 text-white/70"
+                aria-label="Next image"
+              >
                 <ChevronRight className="h-4 w-4" />
               </button>
               <button
@@ -144,9 +201,16 @@ export default function BagDetailsModal({
                 </div>
               </div>
               <div className="mt-2 flex justify-center gap-1">
-                <span className="h-1.5 w-4 rounded-full bg-white" />
-                <span className="h-1.5 w-2 rounded-full bg-white/40" />
-                <span className="h-1.5 w-2 rounded-full bg-white/40" />
+                {imageCandidates.map((_, index) => (
+                  <span
+                    key={index}
+                    className={`h-1.5 rounded-full ${
+                      index === activeImageIndex
+                        ? "w-4 bg-white"
+                        : "w-2 bg-white/40"
+                    }`}
+                  />
+                ))}
               </div>
             </div>
 
@@ -186,7 +250,9 @@ export default function BagDetailsModal({
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-2.5">
-                  <span className="text-muted-foreground">Year:</span>
+                  <span className="text-muted-foreground">
+                    Production Year:
+                  </span>
                   <span className="text-card-foreground">
                     {purchaseYear ?? "N/A"}
                   </span>
@@ -209,9 +275,7 @@ export default function BagDetailsModal({
                   </p>
                   <p
                     className={`inline-flex items-center gap-1 text-sm font-semibold ${
-                      isUp
-                        ? "text-green-500"
-                        : "text-destructive"
+                      isUp ? "text-green-500" : "text-destructive"
                     }`}
                   >
                     {isUp ? (
@@ -220,8 +284,7 @@ export default function BagDetailsModal({
                       <TrendingDown className="h-4 w-4" />
                     )}
                     {isUp ? "+" : "-"}
-                    {pctValue.toFixed(1)}
-                    %
+                    {pctValue.toFixed(1)}%
                   </p>
                 </div>
               </div>

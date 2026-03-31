@@ -11,46 +11,64 @@ import { AInput } from "@/components/form/AInput";
 import { ASelect } from "@/components/form/ASelect";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-const bagModelSchema = z.object({
+const createModelSchema = z.object({
   brand: z.string().min(1, "Brand is required"),
   modelName: z.string().min(2, "Model name must be at least 2 characters"),
 });
 
-export type BagModelFormValues = z.infer<typeof bagModelSchema>;
+const editModelSchema = z.object({
+  brand: z.string().optional(),
+  modelName: z.string().optional(),
+});
+
+export type BagModelFormValues = z.infer<typeof createModelSchema>;
 
 type BagModelFormDialogProps = {
   open: boolean;
   mode: "add" | "edit";
   initialValues?: Partial<BagModelFormValues>;
+  brandOptions: { label: string; value: string }[];
+  initialImageUrl?: string;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (values: BagModelFormValues, imagePreviewUrl: string) => void;
+  onSubmit: (values: BagModelFormValues, imageFile?: File | null) => void;
 };
 
 export default function BagModelFormDialog({
   open,
   mode,
   initialValues,
+  brandOptions,
+  initialImageUrl,
   onOpenChange,
   onSubmit,
 }: BagModelFormDialogProps) {
   const [formKey, setFormKey] = useState(0);
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState("");
+  const [imageCleared, setImageCleared] = useState(false);
 
   useEffect(() => {
+    if (open && initialImageUrl && !uploadPreviewUrl && !imageCleared) {
+      setUploadPreviewUrl(initialImageUrl);
+      setUploadFileName("Current image");
+    }
+
     return () => {
       if (uploadPreviewUrl) {
         URL.revokeObjectURL(uploadPreviewUrl);
       }
     };
-  }, [uploadPreviewUrl]);
+  }, [open, initialImageUrl, uploadPreviewUrl, imageCleared]);
 
   const reset = () => {
     setFormKey((prev) => prev + 1);
     setUploadFileName("");
     setUploadPreviewUrl("");
+    setUploadFile(null);
     setImageError("");
+    setImageCleared(false);
   };
 
   useEffect(() => {
@@ -60,11 +78,11 @@ export default function BagModelFormDialog({
   }, [open, mode]);
 
   const handleSubmit = (values: BagModelFormValues) => {
-    if (!uploadPreviewUrl) {
+    if (mode === "add" && !uploadFile) {
       setImageError("Bag image is required");
       return;
     }
-    onSubmit(values, uploadPreviewUrl);
+    onSubmit(values, uploadFile);
     reset();
     onOpenChange(false);
   };
@@ -98,7 +116,7 @@ export default function BagModelFormDialog({
 
         <AForm<BagModelFormValues>
           key={formKey}
-          schema={bagModelSchema}
+          schema={mode === "edit" ? editModelSchema : createModelSchema}
           defaultValues={{
             brand: initialValues?.brand ?? "",
             modelName: initialValues?.modelName ?? "",
@@ -109,20 +127,15 @@ export default function BagModelFormDialog({
           <ASelect
             name="brand"
             label="Brand"
-            required
-            options={[
-              { label: "Hermes", value: "Hermes" },
-              { label: "Chanel", value: "Chanel" },
-              { label: "Dior", value: "Dior" },
-              { label: "Gucci", value: "Gucci" },
-            ]}
+            required={mode === "add"}
+            options={brandOptions}
             placeholder="Select brand"
           />
 
           <AInput
             name="modelName"
             label="Model name"
-            required
+            required={mode === "add"}
             placeholder="Enter model name here.."
           />
 
@@ -149,7 +162,9 @@ export default function BagModelFormDialog({
                       }
                       setUploadPreviewUrl("");
                       setUploadFileName("");
+                      setUploadFile(null);
                       setImageError("");
+                      setImageCleared(true);
                     }}
                     className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-black/60 text-white"
                     aria-label="Remove uploaded image"
@@ -176,9 +191,11 @@ export default function BagModelFormDialog({
                     URL.revokeObjectURL(uploadPreviewUrl);
                   }
                   const nextPreview = URL.createObjectURL(file);
+                  setUploadFile(file);
                   setUploadPreviewUrl(nextPreview);
                   setUploadFileName(file.name);
                   setImageError("");
+                  setImageCleared(false);
                 }}
               />
             </label>
