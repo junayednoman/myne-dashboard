@@ -5,12 +5,18 @@ import Image from "next/image";
 import { ChevronLeft, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { toast } from "sonner";
 
 import AdminActionButton from "@/components/admin/admin-action-button";
 import AForm from "@/components/form/AForm";
 import { AInput } from "@/components/form/AInput";
 import JoditTextEditor from "@/components/form/ATextEditor";
+import {
+  useCreateBlogMutation,
+  useGetBlogByIdQuery,
+  useUpdateBlogMutation,
+} from "@/redux/api/blogApi";
+import handleMutation from "@/utils/handleMutation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const blogSchema = z.object({
   title: z.string().min(3, "Blog title must be at least 3 characters"),
@@ -20,34 +26,38 @@ type BlogFormValues = z.infer<typeof blogSchema>;
 
 type BlogEditorFormProps = {
   mode: "create" | "edit";
-  initialValues?: {
-    title?: string;
-    description?: string;
-    image?: string;
-  };
+  blogId?: string;
 };
 
-export default function BlogEditorForm({
-  mode,
-  initialValues,
-}: BlogEditorFormProps) {
+export default function BlogEditorForm({ mode, blogId }: BlogEditorFormProps) {
   const router = useRouter();
   const [formKey, setFormKey] = useState(0);
   const [uploadFileName, setUploadFileName] = useState("");
-  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(
-    initialValues?.image ?? "",
-  );
+  const [uploadPreviewUrl, setUploadPreviewUrl] = useState("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState("");
-  const [description, setDescription] = useState(
-    initialValues?.description ?? "",
-  );
+  const [description, setDescription] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data, isLoading, isError, error } = useGetBlogByIdQuery(blogId ?? "", {
+    skip: mode !== "edit" || !blogId,
+  });
+  const [createBlog] = useCreateBlogMutation();
+  const [updateBlog] = useUpdateBlogMutation();
+
+  const initialValues =
+    mode === "edit"
+      ? {
+          title: data?.data?.blogTitle ?? "",
+          description: data?.data?.blogDescription ?? "",
+          image: data?.data?.blogImage ?? "",
+        }
+      : undefined;
 
   useEffect(() => {
     setFormKey((prev) => prev + 1);
     setUploadPreviewUrl(initialValues?.image ?? "");
     setUploadFileName("");
+    setUploadFile(null);
     setDescription(initialValues?.description ?? "");
     setImageError("");
     setDescriptionError("");
@@ -63,9 +73,18 @@ export default function BlogEditorForm({
     [description],
   );
 
+  const errorMessage = (() => {
+    if (!isError) return "";
+    if (typeof error === "string") return error;
+    if (error && typeof error === "object" && "data" in error) {
+      const dataError = (error as { data?: { message?: string } }).data;
+      if (dataError?.message) return dataError.message;
+    }
+    return "Failed to load blog.";
+  })();
+
   const handleSubmit = async (values: BlogFormValues) => {
-    void values;
-    if (!uploadPreviewUrl) {
+    if (mode === "create" && !uploadFile) {
       setImageError("Blog image is required");
       return;
     }
@@ -75,16 +94,65 @@ export default function BlogEditorForm({
       return;
     }
 
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    toast.success(
-      mode === "create"
-        ? "Blog created successfully."
-        : "Blog updated successfully.",
+    if (mode === "create") {
+      await handleMutation(
+        {
+          blogTitle: values.title,
+          blogDescription: description,
+          blogImage: uploadFile,
+        },
+        createBlog,
+        "Creating blog...",
+        () => {
+          router.push("/dashboard/blog");
+        },
+      );
+      return;
+    }
+
+    if (!blogId) return;
+
+    await handleMutation(
+      {
+        id: blogId,
+        blogTitle: values.title,
+        blogDescription: description,
+        blogImage: uploadFile || undefined,
+      },
+      updateBlog,
+      "Updating blog...",
+      () => {
+        router.push("/dashboard/blog");
+      },
     );
-    setIsSubmitting(false);
-    router.push("/dashboard/blog");
   };
+
+  if (mode === "edit" && isLoading) {
+    return (
+      <section className="rounded-lg border border-border bg-card p-4">
+        <div className="mb-4 flex items-center gap-3 border-b border-border pb-3">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-8 w-40" />
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-[220px] w-full rounded-md" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-[400px] w-full rounded-md" />
+          <Skeleton className="h-11 w-full" />
+        </div>
+      </section>
+    );
+  }
+
+  if (mode === "edit" && isError) {
+    return (
+      <section className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-md border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">
+          {errorMessage}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="rounded-lg border border-border bg-card p-4">
@@ -162,6 +230,7 @@ export default function BlogEditorForm({
                   URL.revokeObjectURL(uploadPreviewUrl);
                 }
                 const nextPreview = URL.createObjectURL(file);
+                setUploadFile(file);
                 setUploadPreviewUrl(nextPreview);
                 setUploadFileName(file.name);
                 setImageError("");
@@ -205,11 +274,10 @@ export default function BlogEditorForm({
         </div>
 
         <AdminActionButton
-          disabled={isSubmitting}
           type="submit"
           className="h-11 w-full justify-center text-sm font-semibold sm:w-full"
         >
-          {isSubmitting ? "Saving..." : mode === "create" ? "Upload" : "Update"}
+          {mode === "create" ? "Upload" : "Update"}
         </AdminActionButton>
       </AForm>
     </section>

@@ -43,6 +43,11 @@ export type CreateAdminBagPayload = {
   bagImage: File;
 };
 
+export type UpdateAdminBagPayload = {
+  id: string;
+  bagImage: File;
+};
+
 const adminBagApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAdminBags: builder.query<AdminBagListResponse, AdminBagListQuery>({
@@ -74,6 +79,18 @@ const adminBagApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["adminBag"],
     }),
+    updateAdminBag: builder.mutation<unknown, UpdateAdminBagPayload>({
+      query: ({ id, bagImage }) => {
+        const formData = new FormData();
+        formData.append("bagImage", bagImage);
+        return {
+          url: `/admin/bags/${id}`,
+          method: "PUT",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["adminBag"],
+    }),
   }),
 });
 
@@ -81,4 +98,5 @@ export const {
   useGetAdminBagsQuery,
   useDeleteAdminBagMutation,
   useCreateAdminBagMutation,
+  useUpdateAdminBagMutation,
 } = adminBagApi;

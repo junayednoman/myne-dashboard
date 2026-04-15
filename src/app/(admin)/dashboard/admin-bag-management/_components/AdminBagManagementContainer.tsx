@@ -16,6 +16,7 @@ import { AdminBagItem } from "../types";
 import {
   useDeleteAdminBagMutation,
   useGetAdminBagsQuery,
+  useUpdateAdminBagMutation,
 } from "@/redux/api/adminBagApi";
 import handleMutation from "@/utils/handleMutation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,6 +37,7 @@ export default function AdminBagManagementContainer() {
     limit: ADMIN_BAG_PAGE_SIZE,
   });
   const [deleteAdminBag] = useDeleteAdminBagMutation();
+  const [updateAdminBag] = useUpdateAdminBagMutation();
 
   const mappedBags = useMemo<AdminBagItem[]>(() => {
     return (
@@ -190,11 +192,20 @@ export default function AdminBagManagementContainer() {
             setEditBagId(null);
           }
         }}
-        onSave={(updated) => {
-          setBags((prev) =>
-            prev.map((item) => (item.id === updated.id ? updated : item)),
+        onSave={({ id, bagImage, previewUrl }) => {
+          handleMutation(
+            { id, bagImage },
+            updateAdminBag,
+            "Updating bag image...",
+            () => {
+              setBags((prev) =>
+                prev.map((item) =>
+                  item.id === id ? { ...item, bagImage: previewUrl } : item,
+                ),
+              );
+              setEditBagId(null);
+            },
           );
-          setEditBagId(null);
         }}
       />
     </>

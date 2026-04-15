@@ -4,4 +4,6 @@ export type BlogItem = {
   description: string;
   content: string;
   image: string;
+  createdAt?: string;
+  updatedAt?: string;
 };

@@ -51,6 +51,7 @@ export const baseApi = createApi({
     "collection",
     "model",
     "adminBag",
+    "blog",
     "legal",
     "profile",
   ],
