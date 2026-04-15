@@ -10,16 +10,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 const DashboardContainer = () => {
   const { data, isLoading, isError, error } = useGetDashboardStatsQuery();
   const stats = data?.data?.data;
-  const topBrands =
-    stats?.topBrands?.map((brand) => ({
-      id: brand._id,
-      brandName: brand.brandName,
-      brandLogo: brand.brandLogo,
-      totalBags: brand.totalBags,
-      bagCost: brand.bagCost,
-      currentValue: brand.currentValue,
-      percentageChange: brand.percentageChange,
-    })) ?? [];
+  const userActivity = Array.isArray(stats?.userActivity)
+    ? stats.userActivity
+    : [];
+  const topBrands = Array.isArray(stats?.topBrands)
+    ? stats.topBrands.map((brand) => ({
+        id: brand._id,
+        brandName: brand.brandName,
+        brandLogo: brand.brandLogo,
+        totalBags: brand.totalBags,
+        bagCost: brand.bagCost,
+        currentValue: brand.currentValue,
+        percentageChange: brand.percentageChange,
+      }))
+    : [];
 
   const errorMessage = (() => {
     if (!isError) return "";
@@ -63,7 +67,7 @@ const DashboardContainer = () => {
           <TopStats stats={stats} />
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <UserOverview userActivity={stats?.userActivity ?? []} />
+            <UserOverview userActivity={userActivity} />
             <TopBrandStatus topBrands={topBrands} />
           </div>
 

@@ -39,8 +39,7 @@ export type DeleteModelPayload = {
 
 export type UpdateModelPayload = {
   id: string;
-  modelName?: string;
-  brandId?: string;
+  modelName: string;
   modelImage?: File;
 };
 
@@ -76,14 +75,13 @@ const modelApi = baseApi.injectEndpoints({
       invalidatesTags: ["model"],
     }),
     updateModel: builder.mutation<unknown, UpdateModelPayload>({
-      query: ({ id, modelName, brandId, modelImage }) => {
+      query: ({ id, modelName, modelImage }) => {
         const formData = new FormData();
-        if (modelName) formData.append("modelName", modelName);
-        if (brandId) formData.append("brandId", brandId);
+        formData.append("modelName", modelName);
         if (modelImage) formData.append("modelImage", modelImage);
         return {
           url: `/admin/model/${id}`,
-          method: "PATCH",
+          method: "PUT",
           body: formData,
         };
       },

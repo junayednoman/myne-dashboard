@@ -17,8 +17,7 @@ const createModelSchema = z.object({
 });
 
 const editModelSchema = z.object({
-  brand: z.string().optional(),
-  modelName: z.string().optional(),
+  modelName: z.string().min(2, "Model name must be at least 2 characters"),
 });
 
 export type BagModelFormValues = z.infer<typeof createModelSchema>;
@@ -83,8 +82,6 @@ export default function BagModelFormDialog({
       return;
     }
     onSubmit(values, uploadFile);
-    reset();
-    onOpenChange(false);
   };
 
   return (
@@ -124,18 +121,28 @@ export default function BagModelFormDialog({
           onSubmit={handleSubmit}
           className="space-y-4 pt-2"
         >
-          <ASelect
-            name="brand"
-            label="Brand"
-            required={mode === "add"}
-            options={brandOptions}
-            placeholder="Select brand"
-          />
+          {mode === "add" ? (
+            <ASelect
+              name="brand"
+              label="Brand"
+              required
+              options={brandOptions}
+              placeholder="Select brand"
+            />
+          ) : (
+            <ASelect
+              name="brand"
+              label="Brand"
+              options={brandOptions}
+              placeholder="Select brand"
+              disabled
+            />
+          )}
 
           <AInput
             name="modelName"
             label="Model name"
-            required={mode === "add"}
+            required
             placeholder="Enter model name here.."
           />
 
@@ -176,7 +183,10 @@ export default function BagModelFormDialog({
                 <>
                   <Upload className="h-6 w-6 text-muted-foreground" />
                   <p className="text-base font-semibold text-card-foreground">
-                    Upload Image
+                    Upload
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Uploaded Model Image
                   </p>
                 </>
               )}
@@ -209,21 +219,30 @@ export default function BagModelFormDialog({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => onOpenChange(false)}
-              className="h-11 rounded-md border border-border bg-background/40 text-sm font-medium text-card-foreground hover:bg-background/60"
-            >
-              Cancel
-            </button>
+          {mode === "add" ? (
             <AdminActionButton
               type="submit"
-              className="h-11 w-full justify-center rounded-md text-sm font-semibold sm:w-full"
+              className="w-full justify-center text-sm font-semibold sm:w-full"
             >
-              {mode === "add" ? "Upload" : "Update"}
+              Upload
             </AdminActionButton>
-          </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => onOpenChange(false)}
+                className="h-11 rounded-md border border-border bg-background/40 text-sm font-medium text-card-foreground hover:bg-background/60"
+              >
+                Cancel
+              </button>
+              <AdminActionButton
+                type="submit"
+                className="h-11 w-full justify-center rounded-md text-sm font-semibold sm:w-full"
+              >
+                Update
+              </AdminActionButton>
+            </div>
+          )}
         </AForm>
       </DialogContent>
     </Dialog>

@@ -13,8 +13,7 @@ export type DashboardStatsResponse = {
       currentValue: number;
       userActivity: Array<{
         count: number;
-        month: number;
-        year: number;
+        month: string;
       }>;
       topBrands: Array<{
         _id: string;

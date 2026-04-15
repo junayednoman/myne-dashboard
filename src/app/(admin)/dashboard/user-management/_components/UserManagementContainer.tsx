@@ -12,10 +12,12 @@ import { Input } from "@/components/ui/input";
 import UserBlockDialog from "./UserBlockDialog";
 import UserManagementPagination from "./UserManagementPagination";
 import UserManagementTable from "./UserManagementTable";
+import AddUserDialog, { AddUserFormValues } from "./AddUserDialog";
 import { UserTableItem } from "../types";
 import { USER_PAGE_SIZE } from "../constants";
 import {
   useChangeUserStatusMutation,
+  useCreateAdminUserMutation,
   useGetAdminUsersQuery,
 } from "@/redux/api/userApi";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,10 +36,12 @@ export default function UserManagementContainer() {
     sortBy: -1,
   });
   const [changeUserStatus] = useChangeUserStatusMutation();
+  const [createAdminUser] = useCreateAdminUserMutation();
   const [pendingBlockUserId, setPendingBlockUserId] = useState<string | null>(
     null,
   );
   const [reviewUserId, setReviewUserId] = useState<string | null>(null);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
   const mappedUsers = useMemo<UserTableItem[]>(() => {
     return (
@@ -132,6 +136,13 @@ export default function UserManagementContainer() {
       }
     : null;
 
+  const handleAddUser = (values: AddUserFormValues) => {
+    handleMutation(values, createAdminUser, "Creating user...", () => {
+      setIsAddUserOpen(false);
+      setPage(1);
+    });
+  };
+
   return (
     <>
       <div className="w-full overflow-x-auto rounded-lg border border-border bg-card">
@@ -149,7 +160,7 @@ export default function UserManagementContainer() {
               placeholder="Search users..."
               className="h-10 w-full border-border bg-background sm:w-[260px]"
             />
-            <AdminActionButton>
+            <AdminActionButton onClick={() => setIsAddUserOpen(true)}>
               <Plus className="h-4 w-4" />
               Add New User
             </AdminActionButton>
@@ -193,6 +204,12 @@ export default function UserManagementContainer() {
           }
         }}
         onConfirm={confirmBlockUser}
+      />
+
+      <AddUserDialog
+        open={isAddUserOpen}
+        onOpenChange={setIsAddUserOpen}
+        onSubmit={handleAddUser}
       />
 
       <UserReviewModal

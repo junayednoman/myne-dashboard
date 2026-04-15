@@ -106,24 +106,22 @@ export default function BagModelContainer() {
     imageFile?: File | null,
   ) => {
     if (formMode === "edit" && editingId) {
-      const modelName =
-        values.modelName && values.modelName.trim()
-          ? values.modelName
-          : undefined;
-      const brandId =
-        values.brand && values.brand.trim() ? values.brand : undefined;
+      const currentItem = items.find((item) => item.id === editingId);
+      const modelName = values.modelName.trim() || currentItem?.modelName || "";
+
       handleMutation(
-        { id: editingId, modelName, brandId, modelImage: imageFile || undefined },
+        { id: editingId, modelName, modelImage: imageFile || undefined },
         updateModel,
         "Updating model...",
         () => {
+          setIsFormOpen(false);
+          setEditingId(null);
           setItems((prev) =>
             prev.map((item) =>
               item.id === editingId
                 ? {
                     ...item,
-                    modelName: modelName ?? item.modelName,
-                    brandId: brandId ?? item.brandId,
+                    modelName,
                   }
                 : item,
             ),
@@ -142,6 +140,9 @@ export default function BagModelContainer() {
       },
       createModel,
       "Creating model...",
+      () => {
+        setIsFormOpen(false);
+      },
     );
   };
 

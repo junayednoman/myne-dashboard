@@ -72,7 +72,9 @@ const brandApi = baseApi.injectEndpoints({
     updateBrand: builder.mutation<unknown, UpdateBrandPayload>({
       query: ({ id, brandName, brandLogo }) => {
         const formData = new FormData();
-        formData.append("brandName", brandName);
+        if(brandName){
+          formData.append("brandName", brandName);
+        }
         if (brandLogo) {
           formData.append("brandLogo", brandLogo);
         }
