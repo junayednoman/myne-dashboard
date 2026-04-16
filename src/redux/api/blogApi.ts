@@ -94,7 +94,7 @@ const blogApi = baseApi.injectEndpoints({
 
         return {
           url: `/admin/blogs/${id}`,
-          method: blogImage ? "PUT" : "PATCH",
+          method: "PUT",
           body: formData,
         };
       },
