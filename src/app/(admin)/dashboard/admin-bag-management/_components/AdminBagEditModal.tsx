@@ -18,7 +18,14 @@ type AdminBagEditModalProps = {
   onOpenChange: (open: boolean) => void;
   onSave: (payload: {
     id: string;
-    bagImage: File;
+    bagBrand: string;
+    bagModel: string;
+    bagColor: string;
+    leatherType: string;
+    hardwareColor?: string;
+    size: string;
+    condition?: string;
+    bagImage?: File;
     previewUrl: string;
   }) => void;
 };
@@ -26,11 +33,21 @@ type AdminBagEditModalProps = {
 type EditFormValues = {
   brand?: string;
   model?: string;
+  bagColor: string;
+  leatherType: string;
+  hardwareColor?: string;
+  size: string;
+  condition?: string;
 };
 
 const editAdminBagSchema = z.object({
   brand: z.string().optional(),
   model: z.string().optional(),
+  bagColor: z.string().min(1, "Bag color is required"),
+  leatherType: z.string().min(1, "Leather type is required"),
+  hardwareColor: z.string().optional(),
+  size: z.string().min(1, "Size is required"),
+  condition: z.string().optional(),
 });
 
 export default function AdminBagEditModal({
@@ -43,7 +60,6 @@ export default function AdminBagEditModal({
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState("");
   const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [imageError, setImageError] = useState("");
   const [imageCleared, setImageCleared] = useState(false);
 
   useEffect(() => {
@@ -64,20 +80,22 @@ export default function AdminBagEditModal({
     setUploadFileName("");
     setUploadPreviewUrl("");
     setUploadFile(null);
-    setImageError("");
     setImageCleared(false);
   };
 
-  const handleSubmit = (_values: EditFormValues) => {
+  const handleSubmit = (values: EditFormValues) => {
     if (!bag) return;
-    if (!uploadFile) {
-      setImageError("Bag image is required");
-      return;
-    }
 
     onSave({
       id: bag.id,
-      bagImage: uploadFile,
+      bagBrand: bag.brandId,
+      bagModel: bag.modelId,
+      bagColor: values.bagColor,
+      leatherType: values.leatherType,
+      hardwareColor: values.hardwareColor?.trim() || undefined,
+      size: values.size,
+      condition: values.condition?.trim() || undefined,
+      bagImage: uploadFile || undefined,
       previewUrl: uploadPreviewUrl || bag.bagImage,
     });
   };
@@ -115,6 +133,11 @@ export default function AdminBagEditModal({
           defaultValues={{
             brand: bag?.brand ?? "",
             model: bag?.model ?? "",
+            bagColor: bag?.bagColor ?? "",
+            leatherType: bag?.leatherType ?? "",
+            hardwareColor: bag?.hardwareColor ?? "",
+            size: bag?.size ?? "",
+            condition: bag?.condition ?? "",
           }}
           onSubmit={handleSubmit}
           className="space-y-4 pt-2"
@@ -133,6 +156,41 @@ export default function AdminBagEditModal({
               disabled
             />
           </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <AInput
+              name="bagColor"
+              label="Bag Color"
+              required
+              placeholder="Enter bag color"
+            />
+            <AInput
+              name="leatherType"
+              label="Leather Type"
+              required
+              placeholder="Enter leather type"
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <AInput
+              name="hardwareColor"
+              label="Hardware Color"
+              placeholder="Enter hardware color"
+            />
+            <AInput
+              name="size"
+              label="Size"
+              required
+              placeholder="Enter bag size"
+            />
+          </div>
+
+          <AInput
+            name="condition"
+            label="Condition"
+            placeholder="Enter condition"
+          />
 
           <div className="pt-1">
             <label className="mb-2 block text-sm text-card-foreground">
@@ -158,7 +216,6 @@ export default function AdminBagEditModal({
                       setUploadPreviewUrl("");
                       setUploadFileName("");
                       setUploadFile(null);
-                      setImageError("");
                       setImageCleared(true);
                     }}
                     className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-black/60 text-white"
@@ -189,7 +246,6 @@ export default function AdminBagEditModal({
                   setUploadFile(file);
                   setUploadPreviewUrl(nextPreview);
                   setUploadFileName(file.name);
-                  setImageError("");
                   setImageCleared(false);
                 }}
               />
@@ -198,9 +254,6 @@ export default function AdminBagEditModal({
               <p className="mt-2 truncate text-xs text-green-400">
                 {uploadFileName}
               </p>
-            )}
-            {imageError && (
-              <p className="mt-2 text-sm text-destructive">{imageError}</p>
             )}
           </div>
 

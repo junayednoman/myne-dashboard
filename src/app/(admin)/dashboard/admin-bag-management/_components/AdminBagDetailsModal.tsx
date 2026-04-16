@@ -60,6 +60,32 @@ export default function AdminBagDetailsModal({
                 <span className="text-card-foreground">{bag.model}</span>
               </div>
               <div className="flex items-center justify-between border-b border-border py-3">
+                <span className="text-muted-foreground">Bag Color:</span>
+                <span className="text-card-foreground">{bag.bagColor || "N/A"}</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border py-3">
+                <span className="text-muted-foreground">Leather Type:</span>
+                <span className="text-card-foreground">
+                  {bag.leatherType || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border py-3">
+                <span className="text-muted-foreground">Hardware Color:</span>
+                <span className="text-card-foreground">
+                  {bag.hardwareColor || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border py-3">
+                <span className="text-muted-foreground">Size:</span>
+                <span className="text-card-foreground">{bag.size || "N/A"}</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border py-3">
+                <span className="text-muted-foreground">Condition:</span>
+                <span className="text-card-foreground">
+                  {bag.condition || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border py-3">
                 <span className="text-muted-foreground">Production Year:</span>
                 <span className="text-card-foreground">{bag.productionYear}</span>
               </div>

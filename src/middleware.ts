@@ -8,7 +8,7 @@ const PROTECTED_ROUTE_PREFIX = "/dashboard";
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
-  console.log("token, ", token);
+
   const isAuthRoute = pathname.startsWith(AUTH_ROUTE_PREFIX);
   const isProtectedRoute = pathname.startsWith(PROTECTED_ROUTE_PREFIX);
 

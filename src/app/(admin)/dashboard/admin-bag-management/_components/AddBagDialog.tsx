@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import AdminActionButton from "@/components/admin/admin-action-button";
 import AForm from "@/components/form/AForm";
+import { AInput } from "@/components/form/AInput";
 import { ASelect } from "@/components/form/ASelect";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useGetBrandsQuery } from "@/redux/api/brandApi";
@@ -22,6 +23,11 @@ type AddBagDialogProps = {
 const addBagSchema = z.object({
   brand: z.string().min(1, "Brand is required"),
   model: z.string().min(2, "Model must be at least 2 characters"),
+  bagColor: z.string().min(1, "Bag color is required"),
+  leatherType: z.string().min(1, "Leather type is required"),
+  hardwareColor: z.string().optional(),
+  size: z.string().min(1, "Size is required"),
+  condition: z.string().optional(),
 });
 
 type AddBagFormValues = z.infer<typeof addBagSchema>;
@@ -75,6 +81,11 @@ export default function AddBagDialog({
       {
         bagBrand: values.brand,
         bagModel: values.model,
+        bagColor: values.bagColor,
+        leatherType: values.leatherType,
+        hardwareColor: values.hardwareColor?.trim() || undefined,
+        size: values.size,
+        condition: values.condition?.trim() || undefined,
         bagImage: uploadFile,
       },
       createAdminBag,
@@ -116,7 +127,15 @@ export default function AddBagDialog({
         <AForm<AddBagFormValues>
           key={formKey}
           schema={addBagSchema}
-          defaultValues={{ brand: "", model: "" }}
+          defaultValues={{
+            brand: "",
+            model: "",
+            bagColor: "",
+            leatherType: "",
+            hardwareColor: "",
+            size: "",
+            condition: "",
+          }}
           onSubmit={handleSubmit}
           className="space-y-4 pt-2"
         >
@@ -137,6 +156,41 @@ export default function AddBagDialog({
               placeholder="Select model"
             />
           </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <AInput
+              name="bagColor"
+              label="Bag Color"
+              required
+              placeholder="Enter bag color"
+            />
+            <AInput
+              name="leatherType"
+              label="Leather Type"
+              required
+              placeholder="Enter leather type"
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <AInput
+              name="hardwareColor"
+              label="Hardware Color"
+              placeholder="Enter hardware color"
+            />
+            <AInput
+              name="size"
+              label="Size"
+              required
+              placeholder="Enter bag size"
+            />
+          </div>
+
+          <AInput
+            name="condition"
+            label="Condition"
+            placeholder="Enter condition"
+          />
 
           <div className="pt-1">
             <label className="mb-2 block text-sm text-card-foreground">

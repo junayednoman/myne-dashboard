@@ -43,9 +43,16 @@ export default function AdminBagManagementContainer() {
     return (
       data?.data?.map((bag) => ({
         id: bag._id,
+        brandId: bag.bagBrand?._id ?? "",
+        modelId: bag.bagModel?._id ?? "",
         bagImage: bag.image,
         brand: bag.bagBrand?.brandName ?? "",
         model: bag.bagModel?.modelName ?? "",
+        bagColor: bag.bagColor ?? "",
+        leatherType: bag.leatherType ?? "",
+        hardwareColor: bag.hardwareColor ?? "",
+        size: bag.size ?? "",
+        condition: bag.condition ?? "",
         productionYear: bag.productionYear
           ? new Date(bag.productionYear).getFullYear()
           : new Date().getFullYear(),
@@ -192,15 +199,46 @@ export default function AdminBagManagementContainer() {
             setEditBagId(null);
           }
         }}
-        onSave={({ id, bagImage, previewUrl }) => {
+        onSave={({
+          id,
+          bagBrand,
+          bagModel,
+          bagColor,
+          leatherType,
+          hardwareColor,
+          size,
+          condition,
+          bagImage,
+          previewUrl,
+        }) => {
           handleMutation(
-            { id, bagImage },
+            {
+              id,
+              bagBrand,
+              bagModel,
+              bagColor,
+              leatherType,
+              hardwareColor,
+              size,
+              condition,
+              bagImage,
+            },
             updateAdminBag,
-            "Updating bag image...",
+            "Updating bag...",
             () => {
               setBags((prev) =>
                 prev.map((item) =>
-                  item.id === id ? { ...item, bagImage: previewUrl } : item,
+                  item.id === id
+                    ? {
+                        ...item,
+                        bagColor,
+                        leatherType,
+                        hardwareColor: hardwareColor ?? "",
+                        size,
+                        condition: condition ?? "",
+                        bagImage: previewUrl,
+                      }
+                    : item,
                 ),
               );
               setEditBagId(null);

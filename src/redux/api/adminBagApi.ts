@@ -3,11 +3,18 @@ import { baseApi } from "./baseApi";
 export type AdminBagItemResponse = {
   _id: string;
   bagBrand?: {
+    _id?: string;
     brandName?: string;
   };
   bagModel?: {
+    _id?: string;
     modelName?: string;
   };
+  bagColor?: string;
+  leatherType?: string;
+  hardwareColor?: string | null;
+  size?: string;
+  condition?: string | null;
   image: string;
   productionYear: string;
   priceStatus?: {
@@ -40,12 +47,24 @@ export type DeleteAdminBagPayload = {
 export type CreateAdminBagPayload = {
   bagBrand: string;
   bagModel: string;
+  bagColor: string;
+  leatherType: string;
+  hardwareColor?: string;
+  size: string;
+  condition?: string;
   bagImage: File;
 };
 
 export type UpdateAdminBagPayload = {
   id: string;
-  bagImage: File;
+  bagBrand: string;
+  bagModel: string;
+  bagColor: string;
+  leatherType: string;
+  hardwareColor?: string;
+  size: string;
+  condition?: string;
+  bagImage?: File;
 };
 
 const adminBagApi = baseApi.injectEndpoints({
@@ -66,10 +85,24 @@ const adminBagApi = baseApi.injectEndpoints({
       invalidatesTags: ["adminBag"],
     }),
     createAdminBag: builder.mutation<unknown, CreateAdminBagPayload>({
-      query: ({ bagBrand, bagModel, bagImage }) => {
+      query: ({
+        bagBrand,
+        bagModel,
+        bagColor,
+        leatherType,
+        hardwareColor,
+        size,
+        condition,
+        bagImage,
+      }) => {
         const formData = new FormData();
         formData.append("bagBrand", bagBrand);
         formData.append("bagModel", bagModel);
+        formData.append("bagColor", bagColor);
+        formData.append("leatherType", leatherType);
+        formData.append("size", size);
+        if (hardwareColor) formData.append("hardwareColor", hardwareColor);
+        if (condition) formData.append("condition", condition);
         formData.append("bagImage", bagImage);
         return {
           url: "/admin/bags",
@@ -80,9 +113,26 @@ const adminBagApi = baseApi.injectEndpoints({
       invalidatesTags: ["adminBag"],
     }),
     updateAdminBag: builder.mutation<unknown, UpdateAdminBagPayload>({
-      query: ({ id, bagImage }) => {
+      query: ({
+        id,
+        bagBrand,
+        bagModel,
+        bagColor,
+        leatherType,
+        hardwareColor,
+        size,
+        condition,
+        bagImage,
+      }) => {
         const formData = new FormData();
-        formData.append("bagImage", bagImage);
+        formData.append("bagBrand", bagBrand);
+        formData.append("bagModel", bagModel);
+        formData.append("bagColor", bagColor);
+        formData.append("leatherType", leatherType);
+        formData.append("size", size);
+        if (hardwareColor) formData.append("hardwareColor", hardwareColor);
+        if (condition) formData.append("condition", condition);
+        if (bagImage) formData.append("bagImage", bagImage);
         return {
           url: `/admin/bags/${id}`,
           method: "PUT",
