@@ -4,6 +4,13 @@ export type CollectionItem = {
   _id: string;
   primaryImage: string | null;
   images: string[];
+  productionYear?: number | null;
+  purchaseLocation?: string | null;
+  waitingTimeInDays?: number | null;
+  bagColor?: string | null;
+  leatherType?: string | null;
+  condition?: string | null;
+  notes?: string | null;
   priceStatus: {
     trend: "up" | "down" | "stable";
     changePercentage: number;

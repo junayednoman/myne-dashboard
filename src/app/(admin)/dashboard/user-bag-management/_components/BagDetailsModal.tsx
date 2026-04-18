@@ -240,7 +240,7 @@ export default function BagDetailsModal({
                 <div className="flex items-center justify-between border-b border-border py-2.5">
                   <span className="text-muted-foreground">Leather Type:</span>
                   <span className="text-card-foreground">
-                    {details?.latherType ?? "N/A"}
+                    {details?.leatherType ?? "N/A"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between border-b border-border py-2.5">
