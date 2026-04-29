@@ -15,6 +15,7 @@ export type AdminBagItemResponse = {
   hardwareColor?: string | null;
   size?: string;
   condition?: string | null;
+  variant?: string | null;
   image: string;
   productionYear: string;
   priceStatus?: {
@@ -52,6 +53,7 @@ export type CreateAdminBagPayload = {
   hardwareColor?: string;
   size: string;
   condition?: string;
+  variant: string;
   bagImage: File;
 };
 
@@ -64,6 +66,7 @@ export type UpdateAdminBagPayload = {
   hardwareColor?: string;
   size: string;
   condition?: string;
+  variant: string;
   bagImage?: File;
 };
 
@@ -93,6 +96,7 @@ const adminBagApi = baseApi.injectEndpoints({
         hardwareColor,
         size,
         condition,
+        variant,
         bagImage,
       }) => {
         const formData = new FormData();
@@ -103,6 +107,7 @@ const adminBagApi = baseApi.injectEndpoints({
         formData.append("size", size);
         if (hardwareColor) formData.append("hardwareColor", hardwareColor);
         if (condition) formData.append("condition", condition);
+        formData.append("variant", variant);
         formData.append("bagImage", bagImage);
         return {
           url: "/admin/bags",
@@ -122,6 +127,7 @@ const adminBagApi = baseApi.injectEndpoints({
         hardwareColor,
         size,
         condition,
+        variant,
         bagImage,
       }) => {
         const formData = new FormData();
@@ -132,6 +138,7 @@ const adminBagApi = baseApi.injectEndpoints({
         formData.append("size", size);
         if (hardwareColor) formData.append("hardwareColor", hardwareColor);
         if (condition) formData.append("condition", condition);
+        formData.append("variant", variant);
         if (bagImage) formData.append("bagImage", bagImage);
         return {
           url: `/admin/bags/${id}`,

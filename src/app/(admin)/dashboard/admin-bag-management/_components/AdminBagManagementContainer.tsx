@@ -53,6 +53,7 @@ export default function AdminBagManagementContainer() {
         hardwareColor: bag.hardwareColor ?? "",
         size: bag.size ?? "",
         condition: bag.condition ?? "",
+        variant: bag.variant ?? "",
         productionYear: bag.productionYear
           ? new Date(bag.productionYear).getFullYear()
           : new Date().getFullYear(),
@@ -208,6 +209,7 @@ export default function AdminBagManagementContainer() {
           hardwareColor,
           size,
           condition,
+          variant,
           bagImage,
           previewUrl,
         }) => {
@@ -221,6 +223,7 @@ export default function AdminBagManagementContainer() {
               hardwareColor,
               size,
               condition,
+              variant,
               bagImage,
             },
             updateAdminBag,
@@ -236,6 +239,7 @@ export default function AdminBagManagementContainer() {
                         hardwareColor: hardwareColor ?? "",
                         size,
                         condition: condition ?? "",
+                        variant,
                         bagImage: previewUrl,
                       }
                     : item,

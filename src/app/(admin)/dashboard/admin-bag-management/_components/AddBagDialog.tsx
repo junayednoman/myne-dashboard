@@ -28,9 +28,18 @@ const addBagSchema = z.object({
   hardwareColor: z.string().optional(),
   size: z.string().min(1, "Size is required"),
   condition: z.string().optional(),
+  variant: z.string().min(1, "Variant is required"),
 });
 
 type AddBagFormValues = z.infer<typeof addBagSchema>;
+
+const conditionOptions = [
+  { label: "New", value: "New" },
+  { label: "Excellent", value: "Excellent" },
+  { label: "Very Good", value: "Very Good" },
+  { label: "Good", value: "Good" },
+  { label: "Fair", value: "Fair" },
+];
 
 export default function AddBagDialog({
   open,
@@ -86,6 +95,7 @@ export default function AddBagDialog({
         hardwareColor: values.hardwareColor?.trim() || undefined,
         size: values.size,
         condition: values.condition?.trim() || undefined,
+        variant: values.variant,
         bagImage: uploadFile,
       },
       createAdminBag,
@@ -135,6 +145,7 @@ export default function AddBagDialog({
             hardwareColor: "",
             size: "",
             condition: "",
+            variant: "",
           }}
           onSubmit={handleSubmit}
           className="space-y-4 pt-2"
@@ -186,11 +197,20 @@ export default function AddBagDialog({
             />
           </div>
 
-          <AInput
-            name="condition"
-            label="Condition"
-            placeholder="Enter condition"
-          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <ASelect
+              name="condition"
+              label="Condition"
+              options={conditionOptions}
+              placeholder="Select condition"
+            />
+            <AInput
+              name="variant"
+              label="Variant"
+              required
+              placeholder="Enter variant"
+            />
+          </div>
 
           <div className="pt-1">
             <label className="mb-2 block text-sm text-card-foreground">

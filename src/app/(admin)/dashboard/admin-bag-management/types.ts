@@ -10,6 +10,7 @@ export type AdminBagItem = {
   hardwareColor: string;
   size: string;
   condition: string;
+  variant: string;
   productionYear: number;
   currentValue: number;
 };

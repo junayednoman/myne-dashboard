@@ -80,6 +80,12 @@ export default function AdminBagDetailsModal({
                 <span className="text-card-foreground">{bag.size || "N/A"}</span>
               </div>
               <div className="flex items-center justify-between border-b border-border py-3">
+                <span className="text-muted-foreground">Variant:</span>
+                <span className="text-card-foreground">
+                  {bag.variant || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-border py-3">
                 <span className="text-muted-foreground">Condition:</span>
                 <span className="text-card-foreground">
                   {bag.condition || "N/A"}

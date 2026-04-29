@@ -6,6 +6,7 @@ import { ChevronLeft, Upload, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AInput } from "@/components/form/AInput";
+import { ASelect } from "@/components/form/ASelect";
 import AForm from "@/components/form/AForm";
 import AdminActionButton from "@/components/admin/admin-action-button";
 import { PLACEHOLDER_IMAGE } from "@/lib/placeholder-image";
@@ -25,6 +26,7 @@ type AdminBagEditModalProps = {
     hardwareColor?: string;
     size: string;
     condition?: string;
+    variant: string;
     bagImage?: File;
     previewUrl: string;
   }) => void;
@@ -38,6 +40,7 @@ type EditFormValues = {
   hardwareColor?: string;
   size: string;
   condition?: string;
+  variant: string;
 };
 
 const editAdminBagSchema = z.object({
@@ -48,7 +51,16 @@ const editAdminBagSchema = z.object({
   hardwareColor: z.string().optional(),
   size: z.string().min(1, "Size is required"),
   condition: z.string().optional(),
+  variant: z.string().min(1, "Variant is required"),
 });
+
+const conditionOptions = [
+  { label: "New", value: "New" },
+  { label: "Excellent", value: "Excellent" },
+  { label: "Very Good", value: "Very Good" },
+  { label: "Good", value: "Good" },
+  { label: "Fair", value: "Fair" },
+];
 
 export default function AdminBagEditModal({
   open,
@@ -95,6 +107,7 @@ export default function AdminBagEditModal({
       hardwareColor: values.hardwareColor?.trim() || undefined,
       size: values.size,
       condition: values.condition?.trim() || undefined,
+      variant: values.variant,
       bagImage: uploadFile || undefined,
       previewUrl: uploadPreviewUrl || bag.bagImage,
     });
@@ -138,6 +151,7 @@ export default function AdminBagEditModal({
             hardwareColor: bag?.hardwareColor ?? "",
             size: bag?.size ?? "",
             condition: bag?.condition ?? "",
+            variant: bag?.variant ?? "",
           }}
           onSubmit={handleSubmit}
           className="space-y-4 pt-2"
@@ -186,11 +200,20 @@ export default function AdminBagEditModal({
             />
           </div>
 
-          <AInput
-            name="condition"
-            label="Condition"
-            placeholder="Enter condition"
-          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <ASelect
+              name="condition"
+              label="Condition"
+              options={conditionOptions}
+              placeholder="Select condition"
+            />
+            <AInput
+              name="variant"
+              label="Variant"
+              required
+              placeholder="Enter variant"
+            />
+          </div>
 
           <div className="pt-1">
             <label className="mb-2 block text-sm text-card-foreground">
