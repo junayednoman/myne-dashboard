@@ -15,6 +15,7 @@ export default function AdminBagManagementTable({
   onDelete,
   onEdit,
 }: AdminBagManagementTableProps) {
+  console.log('bag', bags);
   return (
     <table className="w-full">
       <thead>

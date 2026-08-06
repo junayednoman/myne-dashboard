@@ -19,6 +19,8 @@ interface AInputProps<TFieldValues extends FieldValues = FieldValues> {
   className?: string;
   disabled?: boolean;
   required?: boolean;
+    value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const AInput = <TFieldValues extends FieldValues = FieldValues>({
@@ -30,6 +32,8 @@ export const AInput = <TFieldValues extends FieldValues = FieldValues>({
   className,
   disabled,
   required,
+    value,
+  onChange,
 }: AInputProps<TFieldValues>) => {
   const effectiveControl = control;
   const [showPassword, setShowPassword] = useState(false);
@@ -50,17 +54,22 @@ export const AInput = <TFieldValues extends FieldValues = FieldValues>({
           <FormControl>
             <div className="relative">
               <Input
-                id={label}
-                type={inputType}
-                placeholder={placeholder}
-                className={`border-border text-foreground h-12 rounded-[8px] pr-10 bg-card ${
-                  className || ""
-                }`}
-                disabled={disabled}
-                {...field}
-              />
-              {type === "password" && (
-                <button
+  id={label}
+  type={inputType}
+  placeholder={placeholder}
+  className={`border-border text-foreground h-12 rounded-[8px] pr-10 bg-card ${
+    className || ""
+  }`}
+  disabled={disabled}
+  {...field}
+  value={value ?? field.value ?? ""}
+  onChange={(e) => {
+    field.onChange(e); // react-hook-form handler
+    onChange?.(e);     // optional custom handler
+  }}
+/>
+                {type === "password" && (
+                  <button
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword(!showPassword)}

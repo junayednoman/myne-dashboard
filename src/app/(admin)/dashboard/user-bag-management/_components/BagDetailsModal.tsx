@@ -146,7 +146,7 @@ export default function BagDetailsModal({
       <DialogContent
         key={bag?.id ?? "bag-details"}
         showCloseButton={false}
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card/95 p-0 backdrop-blur-md [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="w-full min-h-[90%] max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card/95 p-0 backdrop-blur-md [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         {isLoading ? (
           <div className="space-y-4 p-4">
@@ -161,7 +161,7 @@ export default function BagDetailsModal({
           </div>
         ) : isError || !details ? (
           <div className="p-4">
-            <div className="rounded-lg border border-dashed border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground">
+            <div className="rounded-lg border border-dashed flex items-center justify-center border-border bg-card px-4 h-full py-10 text-center text-sm text-muted-foreground">
               {errorMessage || "No bag details available."}
             </div>
           </div>

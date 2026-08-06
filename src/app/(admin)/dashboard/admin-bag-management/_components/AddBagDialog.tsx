@@ -29,6 +29,7 @@ const addBagSchema = z.object({
   size: z.string().min(1, "Size is required"),
   condition: z.string().optional(),
   variant: z.string().min(1, "Variant is required"),
+  specialVariant: z.string().min(1, "Special variant is required"),
 });
 
 type AddBagFormValues = z.infer<typeof addBagSchema>;
@@ -50,6 +51,7 @@ export default function AddBagDialog({
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState("");
   const [imageError, setImageError] = useState("");
   const [uploadFile, setUploadFile] = useState<File | null>(null);
+
   const { data: brandsData } = useGetBrandsQuery({ page: 1, limit: 200 });
   const { data: modelsData } = useGetModelsQuery({ page: 1, limit: 200 });
   const [createAdminBag] = useCreateAdminBagMutation();
@@ -86,9 +88,13 @@ export default function AddBagDialog({
       setImageError("Bag image is required");
       return;
     }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    values.bagColor = values.bagColor.split(", ");
     handleMutation(
       {
-        bagBrand: values.brand,
+        brand: values.brand,
         bagModel: values.model,
         bagColor: values.bagColor,
         leatherType: values.leatherType,
@@ -97,6 +103,7 @@ export default function AddBagDialog({
         condition: values.condition?.trim() || undefined,
         variant: values.variant,
         bagImage: uploadFile,
+        specialVariant: values.specialVariant,
       },
       createAdminBag,
       "Creating admin bag...",
@@ -119,177 +126,188 @@ export default function AddBagDialog({
     >
       <DialogContent
         showCloseButton={false}
-        className="w-full max-w-4xl rounded-lg border border-border bg-card/95 p-4 backdrop-blur-md"
+        className="w-full max-w-3xl! rounded-lg border border-border bg-card/95 p-4 backdrop-blur-md"
       >
-        <div className="flex items-center gap-3 border-b border-border pb-3">
-          <button
-            onClick={() => onOpenChange(false)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-card-foreground"
-            aria-label="Close upload bag modal"
+        <div className="max-w-[97%]!">
+          <div className="flex items-center gap-3 border-b border-border pb-3">
+            <button
+              onClick={() => onOpenChange(false)}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:text-card-foreground"
+              aria-label="Close upload bag modal"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <DialogTitle className="text-xl font-semibold text-card-foreground">
+              Upload Bag
+            </DialogTitle>
+          </div>
+
+          <AForm<AddBagFormValues>
+            key={formKey}
+            schema={addBagSchema}
+            defaultValues={{
+              brand: "",
+              model: "",
+              bagColor: "",
+              leatherType: "",
+              hardwareColor: "",
+              size: "",
+              condition: "",
+              variant: "",
+            }}
+            onSubmit={handleSubmit}
+            className="space-y-4 pt-2"
           >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <DialogTitle className="text-xl font-semibold text-card-foreground">
-            Upload Bag
-          </DialogTitle>
-        </div>
-
-        <AForm<AddBagFormValues>
-          key={formKey}
-          schema={addBagSchema}
-          defaultValues={{
-            brand: "",
-            model: "",
-            bagColor: "",
-            leatherType: "",
-            hardwareColor: "",
-            size: "",
-            condition: "",
-            variant: "",
-          }}
-          onSubmit={handleSubmit}
-          className="space-y-4 pt-2"
-        >
-          <div className="grid gap-4 md:grid-cols-2">
-            <ASelect
-              name="brand"
-              label="Brand"
-              required
-              options={brandOptions}
-              placeholder="Select brand"
-            />
-
-            <ASelect
-              name="model"
-              label="Model"
-              required
-              options={modelOptions}
-              placeholder="Select model"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <AInput
-              name="bagColor"
-              label="Bag Color"
-              required
-              placeholder="Enter bag color"
-            />
-            <AInput
-              name="leatherType"
-              label="Leather Type"
-              required
-              placeholder="Enter leather type"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <AInput
-              name="hardwareColor"
-              label="Hardware Color"
-              placeholder="Enter hardware color"
-            />
-            <AInput
-              name="size"
-              label="Size"
-              required
-              placeholder="Enter bag size"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <ASelect
-              name="condition"
-              label="Condition"
-              options={conditionOptions}
-              placeholder="Select condition"
-            />
-            <AInput
-              name="variant"
-              label="Variant"
-              required
-              placeholder="Enter variant"
-            />
-          </div>
-
-          <div className="pt-1">
-            <label className="mb-2 block text-sm text-card-foreground">
-              Bag Image
-            </label>
-            <label className="relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-md border border-dashed border-border bg-background/60 px-4 py-8 text-center">
-              {uploadPreviewUrl ? (
-                <>
-                  <Image
-                    src={uploadPreviewUrl}
-                    alt="Selected bag"
-                    fill
-                    className="object-contain p-4"
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (uploadPreviewUrl) {
-                        URL.revokeObjectURL(uploadPreviewUrl);
-                      }
-                      setUploadPreviewUrl("");
-                      setUploadFileName("");
-                      setImageError("");
-                      setUploadFile(null);
-                    }}
-                    className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-black/60 text-white"
-                    aria-label="Remove uploaded image"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Upload className="h-6 w-6 text-muted-foreground" />
-                  <p className="text-base font-semibold text-card-foreground">
-                    Upload
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Uploaded Bag Image
-                  </p>
-                </>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  if (uploadPreviewUrl) {
-                    URL.revokeObjectURL(uploadPreviewUrl);
-                  }
-                  const nextPreview = URL.createObjectURL(file);
-                  setUploadPreviewUrl(nextPreview);
-                  setUploadFileName(file.name);
-                  setImageError("");
-                  setUploadFile(file);
-                }}
+            <div className="grid gap-4 md:grid-cols-2">
+              <ASelect
+                name="brand"
+                label="Brand"
+                required
+                options={brandOptions}
+                placeholder="Select brand"
               />
-            </label>
-            {uploadFileName && (
-              <p className="mt-2 truncate text-xs text-green-400">
-                {uploadFileName}
-              </p>
-            )}
-            {imageError && (
-              <p className="mt-2 text-sm text-destructive">{imageError}</p>
-            )}
-          </div>
 
-          <AdminActionButton
-            type="submit"
-            className="w-full justify-center text-sm font-semibold sm:w-full"
-          >
-            Upload Bag
-          </AdminActionButton>
-        </AForm>
+              <ASelect
+                name="model"
+                label="Model"
+                required
+                options={modelOptions}
+                placeholder="Select model"
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-3">
+                <AInput
+                  name="bagColor"
+                  label="Bag Color"
+                  required
+                  placeholder="Enter bag color"
+                />
+              </div>
+
+              <AInput
+                name="leatherType"
+                label="Material"
+                required
+                placeholder="Enter material type"
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <AInput
+                name="hardwareColor"
+                label="Hardware Color"
+                placeholder="Enter hardware color"
+              />
+              <AInput
+                name="size"
+                label="Size"
+                required
+                placeholder="Enter bag size"
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <ASelect
+                name="condition"
+                label="Condition"
+                options={conditionOptions}
+                placeholder="Select condition"
+              />
+              <AInput
+                name="variant"
+                label="Construction"
+                required
+                placeholder="Enter construction value"
+              />
+            </div>
+            <AInput
+              name="specialVariant"
+              label="Special Variant"
+              required
+              placeholder="Enter special variant value"
+            />
+
+            <div className="pt-1">
+              <label className="mb-2 block text-sm text-card-foreground">
+                Bag Image
+              </label>
+              <label className="relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-md border border-dashed border-border bg-background/60 px-4 py-8 text-center">
+                {uploadPreviewUrl ? (
+                  <>
+                    <Image
+                      src={uploadPreviewUrl}
+                      alt="Selected bag"
+                      fill
+                      className="object-contain p-4"
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (uploadPreviewUrl) {
+                          URL.revokeObjectURL(uploadPreviewUrl);
+                        }
+                        setUploadPreviewUrl("");
+                        setUploadFileName("");
+                        setImageError("");
+                        setUploadFile(null);
+                      }}
+                      className="absolute right-3 top-3 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-black/60 text-white"
+                      aria-label="Remove uploaded image"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-6 w-6 text-muted-foreground" />
+                    <p className="text-base font-semibold text-card-foreground">
+                      Upload
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Uploaded Bag Image
+                    </p>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (uploadPreviewUrl) {
+                      URL.revokeObjectURL(uploadPreviewUrl);
+                    }
+                    const nextPreview = URL.createObjectURL(file);
+                    setUploadPreviewUrl(nextPreview);
+                    setUploadFileName(file.name);
+                    setImageError("");
+                    setUploadFile(file);
+                  }}
+                />
+              </label>
+              {uploadFileName && (
+                <p className="mt-2 truncate text-xs text-green-400">
+                  {uploadFileName}
+                </p>
+              )}
+              {imageError && (
+                <p className="mt-2 text-sm text-destructive">{imageError}</p>
+              )}
+            </div>
+
+            <AdminActionButton
+              type="submit"
+              className="w-full justify-center text-sm font-semibold sm:w-full"
+            >
+              Upload Bag
+            </AdminActionButton>
+          </AForm>
+        </div>
       </DialogContent>
     </Dialog>
   );

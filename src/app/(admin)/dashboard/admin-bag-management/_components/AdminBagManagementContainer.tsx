@@ -43,11 +43,11 @@ export default function AdminBagManagementContainer() {
     return (
       data?.data?.map((bag) => ({
         id: bag._id,
-        brandId: bag.bagBrand?._id ?? "",
-        modelId: bag.bagModel?._id ?? "",
+        brandId: bag.brand?._id ?? "",
+        modelId: bag.model?._id ?? "",
         bagImage: bag.image,
-        brand: bag.bagBrand?.brandName ?? "",
-        model: bag.bagModel?.modelName ?? "",
+        brand: bag.brand?.brandName ?? "",
+        model: bag.model?.modelName ?? "",
         bagColor: bag.bagColor ?? "",
         leatherType: bag.leatherType ?? "",
         hardwareColor: bag.hardwareColor ?? "",
@@ -202,8 +202,8 @@ export default function AdminBagManagementContainer() {
         }}
         onSave={({
           id,
-          bagBrand,
-          bagModel,
+          brand,
+          model,
           bagColor,
           leatherType,
           hardwareColor,
@@ -216,8 +216,8 @@ export default function AdminBagManagementContainer() {
           handleMutation(
             {
               id,
-              bagBrand,
-              bagModel,
+              brand,
+              model,
               bagColor,
               leatherType,
               hardwareColor,

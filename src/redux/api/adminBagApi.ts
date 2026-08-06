@@ -2,11 +2,11 @@ import { baseApi } from "./baseApi";
 
 export type AdminBagItemResponse = {
   _id: string;
-  bagBrand?: {
+  brand?: {
     _id?: string;
     brandName?: string;
   };
-  bagModel?: {
+  model?: {
     _id?: string;
     modelName?: string;
   };
@@ -46,27 +46,29 @@ export type DeleteAdminBagPayload = {
 };
 
 export type CreateAdminBagPayload = {
-  bagBrand: string;
+  brand: string;
   bagModel: string;
-  bagColor: string;
+  bagColor: string[];
   leatherType: string;
   hardwareColor?: string;
   size: string;
   condition?: string;
   variant: string;
+  specialVariant: string;
   bagImage: File;
 };
 
 export type UpdateAdminBagPayload = {
   id: string;
-  bagBrand: string;
+  brand: string;
   bagModel: string;
-  bagColor: string;
+  bagColor: string[];
   leatherType: string;
   hardwareColor?: string;
   size: string;
   condition?: string;
   variant: string;
+  specialVariant?: string;
   bagImage?: File;
 };
 
@@ -89,7 +91,7 @@ const adminBagApi = baseApi.injectEndpoints({
     }),
     createAdminBag: builder.mutation<unknown, CreateAdminBagPayload>({
       query: ({
-        bagBrand,
+        brand,
         bagModel,
         bagColor,
         leatherType,
@@ -98,17 +100,19 @@ const adminBagApi = baseApi.injectEndpoints({
         condition,
         variant,
         bagImage,
+        specialVariant,
       }) => {
         const formData = new FormData();
-        formData.append("bagBrand", bagBrand);
-        formData.append("bagModel", bagModel);
-        formData.append("bagColor", bagColor);
-        formData.append("leatherType", leatherType);
+        formData.append("brandId", brand);
+        formData.append("modelId", bagModel);
+        formData.append("material", leatherType);
+        formData.append("specialVariant", specialVariant);
         formData.append("size", size);
         if (hardwareColor) formData.append("hardwareColor", hardwareColor);
         if (condition) formData.append("condition", condition);
         formData.append("variant", variant);
         formData.append("bagImage", bagImage);
+        bagColor.forEach((color) => formData.append("bagColor", color));
         return {
           url: "/admin/bags",
           method: "POST",
@@ -120,7 +124,7 @@ const adminBagApi = baseApi.injectEndpoints({
     updateAdminBag: builder.mutation<unknown, UpdateAdminBagPayload>({
       query: ({
         id,
-        bagBrand,
+        brand,
         bagModel,
         bagColor,
         leatherType,
@@ -128,13 +132,15 @@ const adminBagApi = baseApi.injectEndpoints({
         size,
         condition,
         variant,
+        specialVariant,
         bagImage,
       }) => {
         const formData = new FormData();
-        formData.append("bagBrand", bagBrand);
-        formData.append("bagModel", bagModel);
-        formData.append("bagColor", bagColor);
-        formData.append("leatherType", leatherType);
+        formData.append("brandId", brand);
+        formData.append("modelId", bagModel);
+        formData.append("bagColor", JSON.stringify(bagColor));
+        formData.append("material", leatherType);
+        if (specialVariant) formData.append("specialVariant", specialVariant);
         formData.append("size", size);
         if (hardwareColor) formData.append("hardwareColor", hardwareColor);
         if (condition) formData.append("condition", condition);
