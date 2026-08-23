@@ -11,6 +11,7 @@ export type AdminBagItem = {
   size: string;
   condition: string;
   variant: string;
+  specialVariant?: string;
   productionYear: number;
   currentValue: number;
 };

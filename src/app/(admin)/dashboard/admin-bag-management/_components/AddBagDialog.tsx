@@ -21,15 +21,17 @@ type AddBagDialogProps = {
 };
 
 const addBagSchema = z.object({
-  brand: z.string().min(1, "Brand is required"),
-  model: z.string().min(2, "Model must be at least 2 characters"),
-  bagColor: z.string().min(1, "Bag color is required"),
-  leatherType: z.string().min(1, "Leather type is required"),
-  hardwareColor: z.string().optional(),
-  size: z.string().min(1, "Size is required"),
-  condition: z.string().optional(),
-  variant: z.string().min(1, "Variant is required"),
-  specialVariant: z.string().min(1, "Special variant is required"),
+  brand: z.string().trim().min(1, "Brand is required"),
+  model: z.string().trim().min(1, "Model is required"),
+  bagColor: z.string().trim().min(1, "Bag color is required"),
+  leatherType: z.string().trim().min(1, "Leather type is required"),
+  hardwareColor: z.string().trim().min(1, "Hardware color is required"),
+  size: z.string().trim().min(1, "Size is required"),
+  yearsOfBag: z.string().trim().nullable(),
+  wearChecklist: z.string().optional(),
+  condition: z.string().trim().min(1, "Condition is required"),
+  variant: z.string().trim().min(1, "Variant is required"),
+  specialVariant: z.string().trim().nullable(),
 });
 
 type AddBagFormValues = z.infer<typeof addBagSchema>;
@@ -41,6 +43,12 @@ const conditionOptions = [
   { label: "Good", value: "Good" },
   { label: "Fair", value: "Fair" },
 ];
+
+const splitCommaSeparatedValues = (value?: string | null) =>
+  value
+    ?.split(",")
+    .map((item) => item.trim())
+    .filter(Boolean) ?? [];
 
 export default function AddBagDialog({
   open,
@@ -89,21 +97,25 @@ export default function AddBagDialog({
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    values.bagColor = values.bagColor.split(", ");
+    const bagColor = splitCommaSeparatedValues(values.bagColor);
+    if (bagColor.length === 0) {
+      return;
+    }
+
     handleMutation(
       {
-        brand: values.brand,
-        bagModel: values.model,
-        bagColor: values.bagColor,
-        leatherType: values.leatherType,
-        hardwareColor: values.hardwareColor?.trim() || undefined,
+        brandId: values.brand,
+        modelId: values.model,
+        bagColor,
+        material: values.leatherType,
+        hardwareColor: values.hardwareColor.trim(),
         size: values.size,
-        condition: values.condition?.trim() || undefined,
+        yearsOfBag: values.yearsOfBag?.trim() || "",
+        wearChecklist: splitCommaSeparatedValues(values.wearChecklist),
+        condition: values.condition.trim(),
         variant: values.variant,
         bagImage: uploadFile,
-        specialVariant: values.specialVariant,
+        specialVariant: values.specialVariant?.trim() || "",
       },
       createAdminBag,
       "Creating admin bag...",
@@ -152,8 +164,11 @@ export default function AddBagDialog({
               leatherType: "",
               hardwareColor: "",
               size: "",
+              yearsOfBag: "",
+              wearChecklist: "",
               condition: "",
               variant: "",
+              specialVariant: "",
             }}
             onSubmit={handleSubmit}
             className="space-y-4 pt-2"
@@ -182,7 +197,7 @@ export default function AddBagDialog({
                   name="bagColor"
                   label="Bag Color"
                   required
-                  placeholder="Enter bag color"
+                  placeholder="Enter bag colors separated by commas"
                 />
               </div>
 
@@ -198,6 +213,7 @@ export default function AddBagDialog({
               <AInput
                 name="hardwareColor"
                 label="Hardware Color"
+                required
                 placeholder="Enter hardware color"
               />
               <AInput
@@ -212,6 +228,7 @@ export default function AddBagDialog({
               <ASelect
                 name="condition"
                 label="Condition"
+                required
                 options={conditionOptions}
                 placeholder="Select condition"
               />
@@ -222,11 +239,23 @@ export default function AddBagDialog({
                 placeholder="Enter construction value"
               />
             </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <AInput
+                name="yearsOfBag"
+                label="Years Of Bag"
+                placeholder="Enter years of bag"
+              />
+              <AInput
+                name="specialVariant"
+                label="Special Variant"
+                placeholder="Enter special variant value"
+              />
+            </div>
+
             <AInput
-              name="specialVariant"
-              label="Special Variant"
-              required
-              placeholder="Enter special variant value"
+              name="wearChecklist"
+              label="Wear Checklist"
+              placeholder="Enter checklist items separated by commas"
             />
 
             <div className="pt-1">

@@ -48,12 +48,15 @@ export default function AdminBagManagementContainer() {
         bagImage: bag.image,
         brand: bag.brand?.brandName ?? "",
         model: bag.model?.modelName ?? "",
-        bagColor: bag.bagColor ?? "",
-        leatherType: bag.leatherType ?? "",
+        bagColor: Array.isArray(bag.bagColor)
+          ? bag.bagColor.join(", ")
+          : (bag.bagColor ?? ""),
+        leatherType: bag.material ?? bag.leatherType ?? "",
         hardwareColor: bag.hardwareColor ?? "",
         size: bag.size ?? "",
         condition: bag.condition ?? "",
         variant: bag.variant ?? "",
+        specialVariant: bag.specialVariant ?? "",
         productionYear: bag.productionYear
           ? new Date(bag.productionYear).getFullYear()
           : new Date().getFullYear(),
@@ -202,28 +205,26 @@ export default function AdminBagManagementContainer() {
         }}
         onSave={({
           id,
-          brand,
-          model,
           bagColor,
-          leatherType,
+          material,
           hardwareColor,
           size,
           condition,
           variant,
+          specialVariant,
           bagImage,
           previewUrl,
         }) => {
           handleMutation(
             {
               id,
-              brand,
-              model,
               bagColor,
-              leatherType,
+              material,
               hardwareColor,
               size,
               condition,
               variant,
+              specialVariant,
               bagImage,
             },
             updateAdminBag,
@@ -234,12 +235,13 @@ export default function AdminBagManagementContainer() {
                   item.id === id
                     ? {
                         ...item,
-                        bagColor,
-                        leatherType,
-                        hardwareColor: hardwareColor ?? "",
+                        bagColor: bagColor.join(", "),
+                        leatherType: material,
+                        hardwareColor,
                         size,
-                        condition: condition ?? "",
+                        condition,
                         variant,
+                        specialVariant,
                         bagImage: previewUrl,
                       }
                     : item,

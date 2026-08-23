@@ -19,14 +19,13 @@ type AdminBagEditModalProps = {
   onOpenChange: (open: boolean) => void;
   onSave: (payload: {
     id: string;
-    brand: string;
-    model: string;
-    bagColor: string;
-    leatherType: string;
-    hardwareColor?: string;
+    bagColor: string[];
+    material: string;
+    hardwareColor: string;
     size: string;
-    condition?: string;
+    condition: string;
     variant: string;
+    specialVariant: string;
     bagImage?: File;
     previewUrl: string;
   }) => void;
@@ -37,21 +36,23 @@ type EditFormValues = {
   model?: string;
   bagColor: string;
   leatherType: string;
-  hardwareColor?: string;
+  hardwareColor: string;
   size: string;
-  condition?: string;
+  condition: string;
   variant: string;
+  specialVariant: string | null;
 };
 
 const editAdminBagSchema = z.object({
   brand: z.string().optional(),
   model: z.string().optional(),
-  bagColor: z.string().min(1, "Bag color is required"),
-  leatherType: z.string().min(1, "Leather type is required"),
-  hardwareColor: z.string().optional(),
-  size: z.string().min(1, "Size is required"),
-  condition: z.string().optional(),
-  variant: z.string().min(1, "Variant is required"),
+  bagColor: z.string().trim().min(1, "Bag color is required"),
+  leatherType: z.string().trim().min(1, "Leather type is required"),
+  hardwareColor: z.string().trim().min(1, "Hardware color is required"),
+  size: z.string().trim().min(1, "Size is required"),
+  condition: z.string().trim().min(1, "Condition is required"),
+  variant: z.string().trim().min(1, "Variant is required"),
+  specialVariant: z.string().trim().nullable(),
 });
 
 const conditionOptions = [
@@ -61,6 +62,12 @@ const conditionOptions = [
   { label: "Good", value: "Good" },
   { label: "Fair", value: "Fair" },
 ];
+
+const splitCommaSeparatedValues = (value?: string | null) =>
+  value
+    ?.split(",")
+    .map((item) => item.trim())
+    .filter(Boolean) ?? [];
 
 export default function AdminBagEditModal({
   open,
@@ -98,16 +105,20 @@ export default function AdminBagEditModal({
   const handleSubmit = (values: EditFormValues) => {
     if (!bag) return;
 
+    const bagColor = splitCommaSeparatedValues(values.bagColor);
+    if (bagColor.length === 0) {
+      return;
+    }
+
     onSave({
       id: bag.id,
-      brand: bag.brandId,
-      model: bag.modelId,
-      bagColor: values.bagColor,
-      leatherType: values.leatherType,
-      hardwareColor: values.hardwareColor?.trim() || undefined,
+      bagColor,
+      material: values.leatherType.trim(),
+      hardwareColor: values.hardwareColor.trim(),
       size: values.size,
-      condition: values.condition?.trim() || undefined,
-      variant: values.variant,
+      condition: values.condition.trim(),
+      variant: values.variant.trim(),
+      specialVariant: values.specialVariant?.trim() || "",
       bagImage: uploadFile || undefined,
       previewUrl: uploadPreviewUrl || bag.bagImage,
     });
@@ -153,6 +164,7 @@ export default function AdminBagEditModal({
               size: bag?.size ?? "",
               condition: bag?.condition ?? "",
               variant: bag?.variant ?? "",
+              specialVariant: bag?.specialVariant ?? "",
             }}
             onSubmit={handleSubmit}
             className="space-y-4 pt-2"
@@ -177,7 +189,7 @@ export default function AdminBagEditModal({
                 name="bagColor"
                 label="Bag Color"
                 required
-                placeholder="Enter bag color"
+                placeholder="Enter bag colors separated by commas"
               />
               <AInput
                 name="leatherType"
@@ -191,6 +203,7 @@ export default function AdminBagEditModal({
               <AInput
                 name="hardwareColor"
                 label="Hardware Color"
+                required
                 placeholder="Enter hardware color"
               />
               <AInput
@@ -205,6 +218,7 @@ export default function AdminBagEditModal({
               <ASelect
                 name="condition"
                 label="Condition"
+                required
                 options={conditionOptions}
                 placeholder="Select condition"
               />
@@ -215,6 +229,12 @@ export default function AdminBagEditModal({
                 placeholder="Enter variant"
               />
             </div>
+
+            <AInput
+              name="specialVariant"
+              label="Special Variant"
+              placeholder="Enter special variant value"
+            />
 
             <div className="pt-1">
               <label className="mb-2 block text-sm text-card-foreground">

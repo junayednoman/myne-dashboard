@@ -10,12 +10,14 @@ export type AdminBagItemResponse = {
     _id?: string;
     modelName?: string;
   };
-  bagColor?: string;
+  bagColor?: string | string[];
+  material?: string;
   leatherType?: string;
   hardwareColor?: string | null;
   size?: string;
   condition?: string | null;
   variant?: string | null;
+  specialVariant?: string | null;
   image: string;
   productionYear: string;
   priceStatus?: {
@@ -46,13 +48,15 @@ export type DeleteAdminBagPayload = {
 };
 
 export type CreateAdminBagPayload = {
-  brand: string;
-  bagModel: string;
+  brandId: string;
+  modelId: string;
   bagColor: string[];
-  leatherType: string;
-  hardwareColor?: string;
+  hardwareColor: string;
+  wearChecklist?: string[];
   size: string;
-  condition?: string;
+  yearsOfBag: string;
+  material: string;
+  condition: string;
   variant: string;
   specialVariant: string;
   bagImage: File;
@@ -60,15 +64,13 @@ export type CreateAdminBagPayload = {
 
 export type UpdateAdminBagPayload = {
   id: string;
-  brand: string;
-  bagModel: string;
   bagColor: string[];
-  leatherType: string;
-  hardwareColor?: string;
+  material: string;
+  hardwareColor: string;
   size: string;
-  condition?: string;
+  condition: string;
   variant: string;
-  specialVariant?: string;
+  specialVariant: string;
   bagImage?: File;
 };
 
@@ -91,28 +93,34 @@ const adminBagApi = baseApi.injectEndpoints({
     }),
     createAdminBag: builder.mutation<unknown, CreateAdminBagPayload>({
       query: ({
-        brand,
-        bagModel,
+        brandId,
+        modelId,
         bagColor,
-        leatherType,
+        material,
         hardwareColor,
+        wearChecklist,
         size,
+        yearsOfBag,
         condition,
         variant,
         bagImage,
         specialVariant,
       }) => {
         const formData = new FormData();
-        formData.append("brandId", brand);
-        formData.append("modelId", bagModel);
-        formData.append("material", leatherType);
+        formData.append("brandId", brandId);
+        formData.append("modelId", modelId);
+        formData.append("material", material);
         formData.append("specialVariant", specialVariant);
         formData.append("size", size);
-        if (hardwareColor) formData.append("hardwareColor", hardwareColor);
-        if (condition) formData.append("condition", condition);
+        formData.append("yearsOfBag", yearsOfBag);
+        formData.append("hardwareColor", hardwareColor);
+        formData.append("condition", condition);
         formData.append("variant", variant);
         formData.append("bagImage", bagImage);
         bagColor.forEach((color) => formData.append("bagColor", color));
+        wearChecklist?.forEach((item) =>
+          formData.append("wearChecklist", item),
+        );
         return {
           url: "/admin/bags",
           method: "POST",
@@ -124,10 +132,8 @@ const adminBagApi = baseApi.injectEndpoints({
     updateAdminBag: builder.mutation<unknown, UpdateAdminBagPayload>({
       query: ({
         id,
-        brand,
-        bagModel,
         bagColor,
-        leatherType,
+        material,
         hardwareColor,
         size,
         condition,
@@ -136,14 +142,12 @@ const adminBagApi = baseApi.injectEndpoints({
         bagImage,
       }) => {
         const formData = new FormData();
-        formData.append("brandId", brand);
-        formData.append("modelId", bagModel);
-        formData.append("bagColor", JSON.stringify(bagColor));
-        formData.append("material", leatherType);
-        if (specialVariant) formData.append("specialVariant", specialVariant);
+        bagColor.forEach((color) => formData.append("bagColor", color));
+        formData.append("material", material);
+        formData.append("specialVariant", specialVariant);
         formData.append("size", size);
-        if (hardwareColor) formData.append("hardwareColor", hardwareColor);
-        if (condition) formData.append("condition", condition);
+        formData.append("hardwareColor", hardwareColor);
+        formData.append("condition", condition);
         formData.append("variant", variant);
         if (bagImage) formData.append("bagImage", bagImage);
         return {
